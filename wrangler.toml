@@ -1,11 +1,4 @@
 name = "king-study"
 main = "king_worker.js"
-compatibility_date = "2026-08-16"
-
-[[routes]]
-pattern = "king-study.com/*"
-zone_name = "king-study.com"
-
-[[routes]]
-pattern = "www.king-study.com/*"
-zone_name = "king-study.com"
+compatibility_date = "2026-05-25"
+compatibility_flags = ["nodejs_compat"]
