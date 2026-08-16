@@ -1,0 +1,11 @@
+name = "king-study"
+main = "king_worker.js"
+compatibility_date = "2026-08-16"
+
+[[routes]]
+pattern = "king-study.com/*"
+zone_name = "king-study.com"
+
+[[routes]]
+pattern = "www.king-study.com/*"
+zone_name = "king-study.com"
