@@ -11,7 +11,7 @@ const CFG = {
   telRaw  : '01068348080',
   gas     : '',                     // ★ Google Apps Script 배포 URL
   // ★ 깃허브에 이미지 올린 뒤 아래 주소만 바꾸면 썸네일이 전부 연결됩니다
-  img     : 'https://raw.githubusercontent.com/dandylsk/king-study/main/img/',
+  img     : 'https://raw.githubusercontent.com/dandylsk80/king-study/main/img/',
   slogan  : '학교별 국·영·수·사·과 과외 정보'
 };
 
