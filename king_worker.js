@@ -11,7 +11,7 @@ const CFG = {
   telRaw  : '01068348080',
   gas     : '',                     // ★ Google Apps Script 배포 URL
   // ★ 깃허브에 이미지 올린 뒤 아래 주소만 바꾸면 썸네일이 전부 연결됩니다
-  img     : '',                     // 깃허브 이미지 쓰려면 raw 주소 입력 (비우면 내장 이미지 사용)
+  img     : 'https://raw.githubusercontent.com/dandylsk80/king-study/main/image/',
   slogan  : '학교별 국·영·수·사·과 과외 정보'
 };
 
@@ -220,9 +220,13 @@ header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdro
 
 /* table */
 .tblw{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r);box-shadow:var(--sh)}
-.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:520px;background:var(--bg)}
+.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:660px;background:var(--bg);table-layout:auto}
 .tbl th{background:var(--vio);color:#fff;font-weight:800;padding:13px 14px;text-align:left;font-size:12.5px;letter-spacing:.02em;white-space:nowrap}
-.tbl td{padding:12px 14px;border-bottom:1px solid var(--line);color:var(--ink2);word-break:keep-all}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--line);color:var(--ink2)}
+.tbl th,.tbl td{overflow-wrap:normal;word-break:keep-all}
+.tbl th:first-child,.tbl td:first-child{min-width:104px;width:104px}
+.tbl th:nth-child(n+2),.tbl td:nth-child(n+2){min-width:230px}
+.tblhint{display:none;font-size:12px;color:var(--ink3);margin-top:9px;font-weight:600}
 .tbl tr:last-child td{border-bottom:0}
 .tbl tr:nth-child(even) td{background:var(--bg2)}
 .tbl td:first-child{font-weight:800;color:var(--ink);white-space:nowrap}
@@ -274,7 +278,11 @@ header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdro
 .faq p{padding:0 20px 20px 54px;font-size:14.5px;color:var(--ink2);word-break:keep-all}
 
 /* cta */
-.cta{background:linear-gradient(120deg,var(--vio) 0%,#8B5CF6 55%,var(--coral) 130%);color:#fff;padding:56px 0}
+.cta{position:relative;overflow:hidden;background:linear-gradient(120deg,var(--vio) 0%,#8B5CF6 55%,var(--coral) 130%);color:#fff;padding:64px 0}
+.cta-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.62}
+.cta::after{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(120deg,rgba(90,62,236,.78) 0%,rgba(124,80,240,.66) 50%,rgba(228,72,110,.74) 130%)}
+.cta h2,.cta p,.cta .k{text-shadow:0 1px 10px rgba(30,16,70,.28)}
+.cta>.wrap{position:relative;z-index:2}
 .cta h2{font-size:clamp(21px,3.3vw,32px);font-weight:900;letter-spacing:-.045em;line-height:1.32;margin:16px 0 12px;word-break:keep-all}
 .cta p{color:rgba(255,255,255,.85);font-size:14.5px;max-width:560px;word-break:keep-all}
 .cta .k{color:var(--vio-d);background:#fff}
@@ -304,6 +312,10 @@ header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdro
 .fi,.fs,.ft{width:100%;padding:14px 16px;border:2px solid var(--line2);border-radius:var(--rs);background:#fff;font-family:var(--sans);font-size:16px;color:var(--ink);outline:none;transition:border .16s;-webkit-appearance:none}
 .fi:focus,.fs:focus,.ft:focus{border-color:var(--vio)}
 .ft{min-height:118px;resize:vertical}
+.addr{display:flex;gap:8px}
+.addr .fi{flex:1;min-width:0;cursor:pointer;background:var(--bg2)}
+.addrbtn{flex-shrink:0;padding:0 20px;border:2px solid var(--vio);background:var(--vio);color:#fff;border-radius:var(--rs);font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap;transition:background .15s}
+.addrbtn:hover{background:var(--vio-d);border-color:var(--vio-d)}
 .fnote{font-size:12.5px;color:var(--ink3);margin:16px 0 22px;line-height:1.7;word-break:keep-all}
 .fbtn{width:100%;padding:17px;background:var(--vio);color:#fff;border:0;border-radius:999px;font-family:var(--sans);font-size:15.5px;font-weight:800;letter-spacing:.01em;cursor:pointer;transition:background .18s;box-shadow:var(--sh2)}
 .fbtn:hover{background:var(--vio-d)}
@@ -359,13 +371,16 @@ body{font-size:15.5px}
 .idx a>*{min-width:0}
 .sh{gap:8px;margin-bottom:20px}
 .two{gap:0}
-.cta{padding:42px 0}.fcols{gap:28px}
+.cta{padding:48px 0}.fcols{gap:28px}
 .fall{flex-direction:column;align-items:flex-start;gap:9px}
 .fall a{margin-left:0;width:100%;text-align:center}
 .fab{right:12px;bottom:12px}.fab a{width:44px;height:44px}
 .btn{padding:13px 22px;font-size:13.5px}
 .hero-b .btn,.cta-b .btn{flex:1;min-width:140px}
-.tbl{font-size:13px;min-width:460px}
+.tbl{font-size:13.5px;min-width:620px}
+.tbl th:nth-child(n+2),.tbl td:nth-child(n+2){min-width:212px}
+.tbl th,.tbl td{padding:12px 13px}
+.tblhint{display:block}
 .pull{font-size:15.5px;padding:16px 18px}
 .bd h3{font-size:16px}
 .faq p{padding-left:20px}
@@ -403,6 +418,10 @@ function footer(){
   + `<div class="fab"><a href="tel:${CFG.telRaw}" class="p" aria-label="전화 상담"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5 19.79 19.79 0 01.22 2.84 2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.94 6.94l1.41-1.41a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></a>`
   + `<a href="/contact" aria-label="상담 신청"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></a></div>`;
 }
+
+/* ══════════════ 썸네일 사진 (깃허브 image 폴더, 30장 순환) ══════════════ */
+const PHOTOS = '852647495-19758436|ali-ahmad-danesh-177079090-12168815|andy-barbour-6683392|asphotography-291777|burst-373904|caio-67112|cottonbro-7428866|darina-belonogova-8004054|feyza-tugba-25430275-12794087|hyeok-jang-426014270-31563854|jay-brand-1763356224-32982365|jueonkim-35855544|katerina-holmes-5905443|katerina-holmes-5905445|ketut-subiyanto-4559527|kowalievska-1128207|lilartsy-1925537|long-ba-mui-1130557677-33807234|marineorga-28396906|mary-taylor-5896843|pixabay-256491|pixabay-289737|pixabay-289738|pnw-prod-8250989|railgunbreaker-31981217|startup-stock-photos-7378|startup-stock-photos-7379|travel-with-lenses-734723610-24366455|walls-io-440716388-15595295|yankrukov-5793947'.split('|').map(n=>'pexels-'+n+'.jpg');
+function photo(seed){ return PHOTOS[seed % PHOTOS.length]; }
 
 /* ══════════════ 썸네일 일러스트 (내장 SVG) ══════════════ */
 const ART_C = {
@@ -497,7 +516,7 @@ function art(file){
 
 /* ══════════════ 썸네일 ══════════════ */
 function thumb(o){
-  const src = CFG.img + (o.file || 'og-default.jpg');
+  const src = CFG.img + photo(o.seed != null ? o.seed : hash(String(o.title||'')));
   return `<div class="thumbw"><div class="thumb">${art(o.file)}<img src="${src}" alt="${esc(o.title)}" width="1200" height="630" fetchpriority="high" onerror="this.remove()">`
   + `<div class="thumb-ov"><div class="thumb-in"><span class="thumb-k">${esc(o.kicker||CFG.brandEn)}</span>`
   + `<h2 class="thumb-t">${esc(o.title)}</h2>`
@@ -508,7 +527,8 @@ function thumb(o){
 function shell(o){
   const url = CFG.origin + o.canonical;
   const d = o.dates || dates(hash(o.canonical));
-  const ogImg = CFG.img ? CFG.img + (o.file || 'og-default.jpg') : CFG.origin + '/og/' + String(o.file||'og-default.jpg').replace(/\.jpg$/,'') + '.png';
+  const ogSeed = (o.dates ? hash(o.canonical) : hash(o.canonical));
+  const ogImg = CFG.img ? CFG.img + photo(ogSeed) : CFG.origin + '/og/' + String(o.file||'og-default.jpg').replace(/\.jpg$/,'') + '.png';
   const ld = [];
 
   ld.push({"@context":"https://schema.org","@type":"WebSite",name:CFG.brand,alternateName:CFG.brandEn,url:CFG.origin,inLanguage:"ko-KR",
@@ -523,7 +543,7 @@ function shell(o){
     ld.push({"@context":"https://schema.org","@type":"BreadcrumbList",itemListElement:o.bc.map((b,i)=>({"@type":"ListItem",position:i+1,name:b.name,item:CFG.origin+b.url}))});
   if (o.article !== false)
     ld.push({"@context":"https://schema.org","@type":"Article",headline:o.title.slice(0,110),description:o.desc,
-      image:{"@type":"ImageObject",url:ogImg,width:1200,height:630},
+      image:[ogImg],
       thumbnailUrl:ogImg,datePublished:d.pubISO,dateModified:d.modISO,inLanguage:"ko-KR",
       author:{"@type":"Organization",name:CFG.brand,url:CFG.origin},
       publisher:{"@type":"Organization",name:CFG.brand,logo:{"@type":"ImageObject",url:CFG.origin+"/apple-touch-icon.png"}},
@@ -558,8 +578,6 @@ ${o.keywords?`<meta name="keywords" content="${esc(o.keywords)}">`:''}
 <meta property="og:description" content="${esc(o.desc)}">
 <meta property="og:url" content="${url}">
 <meta property="og:image" content="${ogImg}">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="${esc(o.title)}">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
@@ -594,7 +612,9 @@ function ctaBlock(t, seed){
               : pick(['다니는 학교와 학년, 현재 점수를 알려주시면 지금 필요한 과목 순서를 정리해 회신드립니다.',
                       '학교명과 학년만 남겨 주시면, 그 학교 기준으로 준비해야 할 과목을 짚어 드립니다.',
                       '내신 범위와 고민되는 과목을 남겨 주시면 학습 방향을 정리해 드립니다.'], s);
-  return `<section class="cta"><div class="wrap"><span class="k">💬 Consulting</span><h2>${h}</h2><p>${p}</p>`
+  return `<section class="cta">`
+  + (CFG.img ? `<img class="cta-bg" src="${CFG.img}${photo(s+13)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : '')
+  + `<div class="wrap"><span class="k">💬 Consulting</span><h2>${h}</h2><p>${p}</p>`
   + `<div class="cta-b"><a href="/contact" class="btn btn-f">상담 신청하기</a><a href="tel:${CFG.telRaw}" class="btn">📞 ${CFG.tel}</a></div></div></section>`;
 }
 function faqBlock(list){ return `<div class="faq">${list.map(f=>`<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div>`; }
@@ -711,7 +731,7 @@ function subjBody(r, sk, seed){
         <tr><td>관리형</td><td>${T} ${S} 계획을 스스로 세우기 어려운 경우</td><td>${T} ${S} 자기주도 습관이 늦게 형성될 수 있음</td></tr>
         <tr><td>내신 집중</td><td>${T} ${S} 시험이 4주 이내로 남은 경우</td><td>${T} ${S} 기초가 비면 단기 효과에 그침</td></tr>
       </tbody>
-    </table></div>
+    </table></div><p class="tblhint">← 표를 좌우로 밀어서 볼 수 있습니다</p>
   </div></section>`;
 }
 
@@ -756,7 +776,7 @@ function pageSubject(slug, sk){
   ], seed);
 
   const title = `${T} ${S}과외 — ${r.gk} ${GSUF[r.g]} 내신 대비`;
-  const body = thumb({file:`subject-${sk}.jpg`, kicker:`${SIDO[r.se]} · ${r.gk} · ${SUBJ[sk].tag}`, title:`${T} ${S}과외`, sub:`${SIDO_FULL[r.se]} ${r.gk} · ${GSUF[r.g]} ${GYEAR[r.g]} · ${S} 내신 대비 가이드`})
+  const body = thumb({seed:hash(canonical), file:`subject-${sk}.jpg`, kicker:`${SIDO[r.se]} · ${r.gk} · ${SUBJ[sk].tag}`, title:`${T} ${S}과외`, sub:`${SIDO_FULL[r.se]} ${r.gk} · ${GSUF[r.g]} ${GYEAR[r.g]} · ${S} 내신 대비 가이드`})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}
      <span class="k">${E} ${SUBJ[sk].tag}</span>
      <h1>${T} ${S}과외</h1>
@@ -828,7 +848,7 @@ function pageSchool(slug){
   ];
 
   const title = `${T} 과외 — 국어·영어·수학·사회·과학 안내`;
-  const body = thumb({file:`school-${GEN[r.g]}.jpg`, kicker:`${SIDO[r.se]} · ${r.gk}`, title:`${T} 과외`, sub:`${SIDO_FULL[r.se]} ${r.gk} · ${GSUF[r.g]} ${GYEAR[r.g]} · 5과목 학습 안내`})
+  const body = thumb({seed:hash('/school/'+slug), file:`school-${GEN[r.g]}.jpg`, kicker:`${SIDO[r.se]} · ${r.gk}`, title:`${T} 과외`, sub:`${SIDO_FULL[r.se]} ${r.gk} · ${GSUF[r.g]} ${GYEAR[r.g]} · 5과목 학습 안내`})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}
      <span class="k">${GEMO[r.g]} ${SIDO[r.se]} · ${r.gk}</span>
      <h1>${T} 과외</h1>
@@ -886,7 +906,7 @@ function pageSchool(slug){
          <tr><td>🌏 사회</td><td>${T} 자료 해석 비중이 큼</td><td>${T} 범위 확정 후</td></tr>
          <tr><td>🔬 과학</td><td>${T} 실험·계산이 함께 출제</td><td>${T} 범위 확정 후</td></tr>
        </tbody>
-     </table></div></div></section>
+     </table></div><p class="tblhint">← 표를 좌우로 밀어서 볼 수 있습니다</p></div></section>
 
      <section class="sec"><div class="wrap"><div class="sh"><span class="no">04</span><h2>🗓 ${T} 1년 학사 흐름</h2></div>
      <div class="tl">
@@ -929,7 +949,7 @@ function pageSchool(slug){
 function pageHome(){
   build();
   const d = dates(hash('home'));
-  const body = thumb({file:'og-default.jpg', kicker:'SCHOOL × SUBJECT', title:`${CFG.brand} — 학교별 국·영·수·사·과 과외`, sub:`전국 ${LIST.length.toLocaleString()}개 초·중·고 학교별 과목 안내`})
+  const body = thumb({seed:hash('/'), file:'og-default.jpg', kicker:'SCHOOL × SUBJECT', title:`${CFG.brand} — 학교별 국·영·수·사·과 과외`, sub:`전국 ${LIST.length.toLocaleString()}개 초·중·고 학교별 과목 안내`})
   + `<section class="hero"><div class="wrap"><span class="k">🏫 School × Subject Tutoring</span>
    <h1>다니는 학교에서<br>출발하는 <em>과외 설계</em></h1>
    <p>전국 ${LIST.length.toLocaleString()}개 초·중·고를 기준으로 국어·영어·수학·사회·과학 과외 정보를 정리했습니다. 학교를 먼저 고르면 그 학교의 학사 일정과 내신 구조에 맞춘 과목별 안내를 확인할 수 있습니다.</p>
@@ -979,7 +999,7 @@ function pageHub(){
   build();
   const d = dates(hash('/hub'));
   const bc=[{name:'홈',url:'/'},{name:'지역별 학교',url:'/hub'}];
-  const body = thumb({file:'region.jpg', kicker:'REGION INDEX', title:'지역별 학교 찾기', sub:`17개 시도 · ${Object.values(SIDX).reduce((a,x)=>a+x.length,0)}개 시군구 · ${LIST.length.toLocaleString()}개 학교`})
+  const body = thumb({seed:hash('/hub'), file:'region.jpg', kicker:'REGION INDEX', title:'지역별 학교 찾기', sub:`17개 시도 · ${Object.values(SIDX).reduce((a,x)=>a+x.length,0)}개 시군구 · ${LIST.length.toLocaleString()}개 학교`})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}<span class="k">📍 Region Index</span>
    <h1>지역별 학교 찾기</h1>
    <p class="lead">17개 시도, ${Object.values(SIDX).reduce((a,x)=>a+x.length,0)}개 시군구에 걸친 ${LIST.length.toLocaleString()}개 학교를 지역 순으로 정리했습니다. 시도를 선택해 시군구와 학교 목록으로 이동하세요.</p>
@@ -999,7 +1019,7 @@ function pageHubSido(se){
   const gl = SIDX[se]; if (!gl) return null;
   const kr=SIDO[se], full=SIDO_FULL[se], tot=gl.reduce((a,x)=>a+x.n,0), seed=hash('/hub/'+se), d=dates(seed);
   const bc=[{name:'홈',url:'/'},{name:'지역별 학교',url:'/hub'},{name:full,url:'/hub/'+se}];
-  const body = thumb({file:'region.jpg', kicker:`REGION · ${kr}`, title:`${full} 학교별 과외`, sub:`${gl.length}개 시군구 · ${tot.toLocaleString()}개 초·중·고`})
+  const body = thumb({seed:hash('/hub/'+se), file:'region.jpg', kicker:`REGION · ${kr}`, title:`${full} 학교별 과외`, sub:`${gl.length}개 시군구 · ${tot.toLocaleString()}개 초·중·고`})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}<span class="k">📍 ${kr}</span>
    <h1>${full} 학교별 과외</h1>
    <p class="lead">${full} 지역 ${gl.length}개 시군구, ${tot.toLocaleString()}개 초·중·고를 정리했습니다. 시군구를 선택하면 해당 지역 학교 목록과 과목별 안내로 이동합니다.</p>
@@ -1029,7 +1049,7 @@ function pageHubGugun(se, ge){
     ${tabs.map((g,i)=>`<div class="glist" id="g-${g}"${i===0?'':' style="display:none"'}>
       <div class="chips">${grp(g).map(r=>`<a class="chip" href="/school/${r.slug}">${r.full}</a>`).join('')}</div></div>`).join('')}
     </div></section>` : '';
-  const body = thumb({file:'region.jpg', kicker:`${SIDO[se]} · ${gk}`, title:`${gk} 학교별 과외`, sub:`초 ${grp('E').length} · 중 ${grp('M').length} · 고 ${grp('H').length} — 총 ${rows.length}개교`})
+  const body = thumb({seed:hash(`/hub/${se}/${ge}`), file:'region.jpg', kicker:`${SIDO[se]} · ${gk}`, title:`${gk} 학교별 과외`, sub:`초 ${grp('E').length} · 중 ${grp('M').length} · 고 ${grp('H').length} — 총 ${rows.length}개교`})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}<span class="k">📍 ${SIDO[se]} · ${gk}</span>
    <h1>${gk} 학교별 과외</h1>
    <p class="lead">${full} ${gk}에 있는 ${rows.length}개 학교입니다. 학교를 선택하면 해당 학교의 국어·영어·수학·사회·과학 과외 안내를 볼 수 있습니다.</p>
@@ -1064,7 +1084,7 @@ function pageAllSchools(page){
     if (p<totalPages) out.push(`<a class="chip" href="/all-schools/${p+1}">다음 →</a>`);
     return `<div class="chips" style="margin-top:26px">${out.join('')}</div>`;
   };
-  const body = thumb({file:'all-schools.jpg', kicker:'ALL SCHOOLS', title:p===1?'전국 전체 학교 목록':`전국 전체 학교 목록 (${p}/${totalPages})`, sub:`초·중·고 ${SORTED.length.toLocaleString()}개교 가나다순`})
+  const body = thumb({seed:hash(canonical), file:'all-schools.jpg', kicker:'ALL SCHOOLS', title:p===1?'전국 전체 학교 목록':`전국 전체 학교 목록 (${p}/${totalPages})`, sub:`초·중·고 ${SORTED.length.toLocaleString()}개교 가나다순`})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}<span class="k">🏫 All Schools</span>
    <h1>전국 전체 학교${p>1?` <span style="font-size:.55em;color:var(--ink3)">${p} / ${totalPages}</span>`:''}</h1>
    <p class="lead">전국 초·중·고 ${SORTED.length.toLocaleString()}개교를 가나다순으로 모두 정리했습니다. 학교명을 선택하면 그 학교의 국어·영어·수학·사회·과학 과외 안내로 이동합니다. 브라우저 검색(Ctrl+F 또는 ⌘+F)으로 학교명을 바로 찾을 수 있습니다.</p>
@@ -1087,7 +1107,7 @@ function pageAllSchools(page){
 function pageSubjIndex(){
   const d=dates(hash('/subject'));
   const bc=[{name:'홈',url:'/'},{name:'과목별 안내',url:'/subject'}];
-  const body = thumb({file:'subject-index.jpg', kicker:'SUBJECTS', title:'과목별 안내 — 국·영·수·사·과', sub:'다섯 과목의 학년별 학습 방향과 내신 대비'})
+  const body = thumb({seed:hash('/subject'), file:'subject-index.jpg', kicker:'SUBJECTS', title:'과목별 안내 — 국·영·수·사·과', sub:'다섯 과목의 학년별 학습 방향과 내신 대비'})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}<span class="k">📚 Subjects</span>
   <h1>과목별 안내</h1><p class="lead">국어·영어·수학·사회·과학 다섯 과목만 다룹니다. 과목마다 학년이 올라가며 무엇이 달라지는지, 어디서 성적이 갈리는지를 정리했습니다.</p>${dateLine(d)}</div></section>
   <section class="sec"><div class="wrap"><div class="idx">${SUBJ_KEYS.map(k=>`<a href="/subject/${k}"><span class="n">${SUBJ[k].no}</span><span class="em">${SUBJ[k].em}</span><span class="t">${SUBJ[k].ko}과외</span><span class="d">${SUBJ[k].pt}</span><span class="ar">→</span></a>`).join('')}</div></div></section>` + ctaBlock('', 13);
@@ -1109,7 +1129,7 @@ function pageSubjDetail(sk){
     {q:`${S} 성적을 올리려면 무엇을 먼저 해야 하나요?`, a:`${S}에서 가장 먼저 할 일은 최근 시험지에서 틀린 문항의 단원을 표시하는 것입니다. ${S} 공백 위치를 알아야 어디부터 손볼지 정해집니다.`},
     {q:`학교마다 ${S} 준비 방법이 다른가요?`, a:`네. ${S}는 학교별로 출제 방식과 부교재 범위가 달라 준비 방법이 달라집니다. 다니는 학교를 선택하면 그 학교 기준의 ${S} 안내를 볼 수 있습니다.`}
   ];
-  const body = thumb({file:`subject-${sk}.jpg`, kicker:`SUBJECT ${SUBJ[sk].no} · ${SUBJ[sk].tag}`, title:`${S}과외 안내`, sub:`${SUBJ[sk].pt} — 학년별 학습 방향과 내신 대비`})
+  const body = thumb({seed:hash('/subject/'+sk), file:`subject-${sk}.jpg`, kicker:`SUBJECT ${SUBJ[sk].no} · ${SUBJ[sk].tag}`, title:`${S}과외 안내`, sub:`${SUBJ[sk].pt} — 학년별 학습 방향과 내신 대비`})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}<span class="k">${E} ${SUBJ[sk].no} · ${SUBJ[sk].tag}</span>
   <h1>${S}과외 안내</h1><p class="lead">${S}는 ${SUBJ[sk].pt}가 핵심입니다. 학교마다 시험 유형이 다르므로, 다니는 학교를 기준으로 확인하는 편이 정확합니다.</p>${dateLine(d)}</div></section>
   <section class="sec"><div class="wrap">
@@ -1142,7 +1162,7 @@ function pageGuide(){
     {q:'오답 노트는 어떻게 쓰는 것이 좋나요?', a:'답을 고치는 것이 아니라 왜 그 방향으로 접근했는지를 적습니다. 개념 부족, 계산 실수, 문제 해석 오류 세 가지로 분류하면 원인별 처방이 달라집니다.'},
     {q:'방학에는 선행을 해야 하나요?', a:'밀린 단원이 있다면 선행보다 공백 확인이 우선입니다. 이전 학기 시험지에서 반복해 틀린 단원부터 메우는 편이 다음 학기 성적에 더 직접적으로 작용합니다.'}
   ];
-  const body = thumb({file:'guide.jpg', kicker:'STUDY GUIDE', title:'학습 가이드 — 시험 준비 일정', sub:'시험 4주 전부터 직후까지, 과목 공통 준비 순서'})
+  const body = thumb({seed:hash('/guide'), file:'guide.jpg', kicker:'STUDY GUIDE', title:'학습 가이드 — 시험 준비 일정', sub:'시험 4주 전부터 직후까지, 과목 공통 준비 순서'})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}<span class="k">🗓 Study Guide</span><h1>학습 가이드</h1>
   <p class="lead">학교 시험을 기준으로 한 준비 일정입니다. 과목과 학년에 관계없이 적용할 수 있는 순서만 정리했습니다.</p>${dateLine(d)}</div></section>
   <section class="sec"><div class="wrap">
@@ -1157,13 +1177,15 @@ function pageGuide(){
 function pageContact(){
   const d=dates(hash('/contact'));
   const bc=[{name:'홈',url:'/'},{name:'상담 신청',url:'/contact'}];
-  const body = thumb({file:'contact.jpg', kicker:'CONSULTING', title:'상담 신청', sub:`학교명·학년·희망 과목을 남겨 주세요 · ${CFG.tel}`})
+  const body = thumb({seed:hash('/contact'), file:'contact.jpg', kicker:'CONSULTING', title:'상담 신청', sub:`이름·주소·학년·희망 과목을 남겨 주세요 · ${CFG.tel}`})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}<span class="k">💬 Consulting</span><h1>상담 신청</h1>
-  <p class="lead">학교명과 학년, 지금 고민되는 과목을 남겨 주시면 확인 후 연락드립니다. 통화가 빠른 경우 <a href="tel:${CFG.telRaw}" style="border-bottom:1px solid var(--acc);color:var(--acc)">${CFG.tel}</a>로 바로 연락 주셔도 됩니다.</p>${dateLine(d)}</div></section>
+  <p class="lead">학생 이름과 주소, 학년, 지금 고민되는 과목을 남겨 주시면 확인 후 연락드립니다. 통화가 빠른 경우 <a href="tel:${CFG.telRaw}" style="border-bottom:1px solid var(--acc);color:var(--acc)">${CFG.tel}</a>로 바로 연락 주셔도 됩니다.</p>${dateLine(d)}</div></section>
   <section class="sec"><div class="wrap"><div class="form">
-  <div class="fr"><label class="fl" for="f-name">학생 또는 학부모 성함 <b>*</b></label><input class="fi" id="f-name" autocomplete="name" placeholder="성함을 입력해 주세요"></div>
+  <div class="fr"><label class="fl" for="f-name">학생 이름 <b>*</b></label><input class="fi" id="f-name" autocomplete="name" placeholder="학생 이름을 입력해 주세요"></div>
   <div class="fr"><label class="fl" for="f-phone">연락처 <b>*</b></label><input class="fi" id="f-phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="010-0000-0000"></div>
-  <div class="fr"><label class="fl" for="f-school">학교명 <b>*</b></label><input class="fi" id="f-school" placeholder="예) 대치초등학교"></div>
+  <div class="fr"><label class="fl" for="f-addr">주소 <b>*</b></label>
+    <div class="addr"><input class="fi" id="f-addr" readonly onclick="findAddr()" placeholder="클릭하면 주소를 검색할 수 있습니다"><button class="addrbtn" type="button" onclick="findAddr()">주소 검색</button></div>
+    <input class="fi" id="f-addr2" style="margin-top:8px" placeholder="상세주소 (동/호수 등)"></div>
   <div class="fr"><label class="fl" for="f-grade">학년 <b>*</b></label><select class="fs" id="f-grade"><option value="">선택해 주세요</option>${['초1','초2','초3','초4','초5','초6','중1','중2','중3','고1','고2','고3'].map(g=>`<option>${g}</option>`).join('')}</select></div>
   <div class="fr"><label class="fl" for="f-subject">희망 과목 <b>*</b></label><select class="fs" id="f-subject"><option value="">선택해 주세요</option>${SUBJ_KEYS.map(k=>`<option>${SUBJ[k].ko}</option>`).join('')}<option>2과목 이상</option></select></div>
   <div class="fr"><label class="fl" for="f-msg">문의 내용</label><textarea class="ft" id="f-msg" placeholder="현재 성적, 고민되는 부분 등을 자유롭게 적어 주세요"></textarea></div>
@@ -1171,12 +1193,25 @@ function pageContact(){
   <button class="fbtn" id="f-send" onclick="sendForm()">상담 신청하기</button>
   <p id="f-res" style="margin-top:14px;font-size:14px"></p>
   </div></div></section>
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"><\/script>
   <script>
+  function findAddr(){
+    if(typeof daum==='undefined'||!daum.Postcode){
+      var el=document.getElementById('f-addr');el.removeAttribute('readonly');el.placeholder='주소를 직접 입력해 주세요';el.focus();return;
+    }
+    new daum.Postcode({oncomplete:function(data){
+      var addr = data.userSelectedType==='J' ? data.jibunAddress : data.roadAddress;
+      if(data.buildingName && data.apartment==='Y') addr += ' ('+data.buildingName+')';
+      document.getElementById('f-addr').value = '['+data.zonecode+'] '+addr;
+      document.getElementById('f-addr2').focus();
+    }}).open();
+  }
   function sendForm(){
     var g=function(i){return (document.getElementById(i).value||'').trim();};
-    var d={name:g('f-name'),phone:g('f-phone'),school:g('f-school'),grade:g('f-grade'),subject:g('f-subject'),message:g('f-msg')};
+    var addr=g('f-addr'), a2=g('f-addr2');
+    var d={name:g('f-name'),phone:g('f-phone'),address:(a2?addr+' '+a2:addr),grade:g('f-grade'),subject:g('f-subject'),message:g('f-msg')};
     var res=document.getElementById('f-res'), btn=document.getElementById('f-send');
-    if(!d.name||!d.phone||!d.school||!d.grade||!d.subject){res.style.color='#8C3A2B';res.textContent='필수 항목을 모두 입력해 주세요.';return;}
+    if(!d.name||!d.phone||!addr||!d.grade||!d.subject){res.style.color='#8C3A2B';res.textContent='필수 항목을 모두 입력해 주세요.';return;}
     btn.disabled=true;btn.textContent='전송 중...';res.textContent='';
     fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})
     .then(function(r){return r.json();})
@@ -1187,7 +1222,7 @@ function pageContact(){
     .catch(function(){res.style.color='#8C3A2B';res.textContent='전송에 실패했습니다. 전화로 연락 주시면 빠르게 도와드리겠습니다.';btn.disabled=false;btn.textContent='다시 시도하기';});
   }
   <\/script>`;
-  return shell({title:`상담 신청 — ${CFG.brand}`, desc:`학교명과 학년, 희망 과목을 남기시면 확인 후 연락드립니다. 전화 상담 ${CFG.tel}.`, canonical:'/contact', body, bc, dates:d, file:'contact.jpg'});
+  return shell({title:`상담 신청 — ${CFG.brand}`, desc:`학생 이름과 주소, 학년, 희망 과목을 남기시면 확인 후 연락드립니다. 전화 상담 ${CFG.tel}.`, canonical:'/contact', body, bc, dates:d, file:'contact.jpg'});
 }
 
 /* ══════════════ 파비콘 / 매니페스트 ══════════════ */
@@ -1378,7 +1413,7 @@ export default {
       try {
         const d = await request.json();
         const params = new URLSearchParams({
-          name:d.name||'', phone:d.phone||'', school:d.school||'', grade:d.grade||'',
+          name:d.name||'', phone:d.phone||'', address:d.address||'', grade:d.grade||'',
           subject:d.subject||'', message:d.message||'', site:'king-study'
         });
         if (!CFG.gas) return new Response(JSON.stringify({ok:false,err:'no-endpoint'}), {status:200, headers:{'content-type':'application/json'}});
