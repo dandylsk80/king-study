@@ -140,10 +140,9 @@ header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdro
 
 /* thumbnail */
 .thumbw{max-width:var(--max);margin:0 auto;padding:26px 32px 0}
-.thumb{position:relative;width:100%;aspect-ratio:1200/500;max-height:340px;overflow:hidden;background:#6B4EFF;border-radius:var(--r)}
-.thumb-art{position:absolute;inset:0;width:100%;height:100%;display:block}
-.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
-.thumb-ov{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:30px 32px;background:linear-gradient(to top,rgba(25,20,60,.82) 0%,rgba(25,20,60,.28) 55%,rgba(25,20,60,.1) 100%)}
+.thumb{position:relative;width:100%;aspect-ratio:1200/580;max-height:450px;overflow:hidden;background:linear-gradient(120deg,var(--vio) 0%,#8B5CF6 55%,var(--coral) 120%);border-radius:var(--r)}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumb-ov{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:36px 32px;background:linear-gradient(to top,rgba(16,12,42,.88) 0%,rgba(16,12,42,.52) 38%,rgba(16,12,42,.14) 72%,rgba(16,12,42,0) 100%)}
 .thumb-in{width:100%}
 .thumb-k{font-size:11.5px;font-weight:800;letter-spacing:.16em;color:#FFD98A;margin-bottom:10px}
 .thumb-t{font-size:clamp(22px,4vw,40px);font-weight:900;color:#fff;letter-spacing:-.045em;line-height:1.24;word-break:keep-all;text-shadow:0 2px 16px rgba(0,0,0,.35)}
@@ -278,11 +277,12 @@ header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdro
 .faq p{padding:0 20px 20px 54px;font-size:14.5px;color:var(--ink2);word-break:keep-all}
 
 /* cta */
-.cta{position:relative;overflow:hidden;background:linear-gradient(120deg,var(--vio) 0%,#8B5CF6 55%,var(--coral) 130%);color:#fff;padding:64px 0}
-.cta-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.62}
-.cta::after{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(120deg,rgba(90,62,236,.78) 0%,rgba(124,80,240,.66) 50%,rgba(228,72,110,.74) 130%)}
-.cta h2,.cta p,.cta .k{text-shadow:0 1px 10px rgba(30,16,70,.28)}
-.cta>.wrap{position:relative;z-index:2}
+.ctaw{max-width:var(--max);margin:0 auto;padding:44px 32px}
+.cta{position:relative;overflow:hidden;border-radius:var(--r);background:linear-gradient(120deg,var(--vio) 0%,#8B5CF6 55%,var(--coral) 130%);color:#fff;padding:48px 32px}
+.cta-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.cta::after{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(115deg,rgba(74,50,200,.86) 0%,rgba(107,78,255,.72) 46%,rgba(228,72,110,.70) 120%)}
+.cta h2,.cta p,.cta .k{text-shadow:0 1px 10px rgba(30,16,70,.30)}
+.cta-in{position:relative;z-index:2}
 .cta h2{font-size:clamp(21px,3.3vw,32px);font-weight:900;letter-spacing:-.045em;line-height:1.32;margin:16px 0 12px;word-break:keep-all}
 .cta p{color:rgba(255,255,255,.85);font-size:14.5px;max-width:560px;word-break:keep-all}
 .cta .k{color:var(--vio-d);background:#fff}
@@ -358,8 +358,8 @@ body{font-size:15.5px}
 .nav{display:none}.mb{display:block}
 .hero{padding:44px 0 38px}.ph{padding:26px 0 26px}.sec{padding:38px 0}
 .thumbw{padding:16px 18px 0}
-.thumb{aspect-ratio:16/10}
-.thumb-ov{padding:20px 20px}
+.thumb{aspect-ratio:4/3;max-height:400px}
+.thumb-ov{padding:24px 20px}
 .thumb-t{font-size:clamp(19px,5.6vw,26px)}
 .thumb-s{font-size:12.5px;margin-top:7px}
 .meta div{min-width:calc(50% - 5px)}
@@ -371,7 +371,8 @@ body{font-size:15.5px}
 .idx a>*{min-width:0}
 .sh{gap:8px;margin-bottom:20px}
 .two{gap:0}
-.cta{padding:48px 0}.fcols{gap:28px}
+.ctaw{padding:28px 18px}
+.cta{padding:34px 22px;border-radius:var(--rs)}.fcols{gap:28px}
 .fall{flex-direction:column;align-items:flex-start;gap:9px}
 .fall a{margin-left:0;width:100%;text-align:center}
 .fab{right:12px;bottom:12px}.fab a{width:44px;height:44px}
@@ -385,7 +386,7 @@ body{font-size:15.5px}
 .bd h3{font-size:16px}
 .faq p{padding-left:20px}
 }
-@media(max-width:380px){.wrap,.hd{padding:0 14px}.thumbw{padding:12px 14px 0}.thumb-ov{padding:16px 16px}.hero-b,.cta-b{flex-direction:column}.hero-b .btn,.cta-b .btn{width:100%}}
+@media(max-width:380px){.wrap,.hd{padding:0 14px}.thumbw{padding:12px 14px 0}.ctaw{padding:22px 14px}.cta{padding:28px 18px}.thumb-ov{padding:16px 16px}.hero-b,.cta-b{flex-direction:column}.hero-b .btn,.cta-b .btn{width:100%}}
 `;
 
 /* ══════════════ 로고 SVG ══════════════ */
@@ -423,101 +424,10 @@ function footer(){
 const PHOTOS = '852647495-19758436|ali-ahmad-danesh-177079090-12168815|andy-barbour-6683392|asphotography-291777|burst-373904|caio-67112|cottonbro-7428866|darina-belonogova-8004054|feyza-tugba-25430275-12794087|hyeok-jang-426014270-31563854|jay-brand-1763356224-32982365|jueonkim-35855544|katerina-holmes-5905443|katerina-holmes-5905445|ketut-subiyanto-4559527|kowalievska-1128207|lilartsy-1925537|long-ba-mui-1130557677-33807234|marineorga-28396906|mary-taylor-5896843|pixabay-256491|pixabay-289737|pixabay-289738|pnw-prod-8250989|railgunbreaker-31981217|startup-stock-photos-7378|startup-stock-photos-7379|travel-with-lenses-734723610-24366455|walls-io-440716388-15595295|yankrukov-5793947'.split('|').map(n=>'pexels-'+n+'.jpg');
 function photo(seed){ return PHOTOS[seed % PHOTOS.length]; }
 
-/* ══════════════ 썸네일 일러스트 (내장 SVG) ══════════════ */
-const ART_C = {
-  'school-elementary':['#FF7A5C','#FFB020'], 'school-middle':['#2E90FA','#6B4EFF'],
-  'school-high':['#6B4EFF','#C04AE0'], 'region':['#00C389','#2E90FA'],
-  'all-schools':['#6B4EFF','#FF5C7A'], 'subject-korean':['#FF5C7A','#FF9A3C'],
-  'subject-english':['#2E90FA','#00C389'], 'subject-math':['#00C389','#2E90FA'],
-  'subject-social':['#FFB020','#FF5C7A'], 'subject-science':['#6B4EFF','#2E90FA'],
-  'subject-index':['#6B4EFF','#FF5C7A'], 'guide':['#2E90FA','#6B4EFF'],
-  'contact':['#FF5C7A','#6B4EFF'], 'og-default':['#6B4EFF','#FF5C7A']
-};
-const W = 'rgba(255,255,255,';
-function win(x,y,cols,rows,w,h,gx,gy,o){
-  let s2='';
-  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++)
-    s2 += `<rect x="${x+c*gx}" y="${y+r*gy}" width="${w}" height="${h}" rx="3" fill="${W}${o})"/>`;
-  return s2;
-}
-const ART_S = {
-  school:`<path d="M700 300 L860 210 L1020 300 Z" fill="${W}.30)"/>`
-    +`<rect x="726" y="300" width="268" height="240" rx="10" fill="${W}.22)"/>`
-    + win(756,332,4,3,42,42,58,60,.34)
-    +`<rect x="836" y="470" width="48" height="70" rx="6" fill="${W}.42)"/>`
-    +`<rect x="856" y="150" width="7" height="70" fill="${W}.35)"/><path d="M863 158h58l-14 17 14 17h-58z" fill="${W}.45)"/>`
-    +`<circle cx="1088" cy="452" r="52" fill="${W}.18)"/><rect x="1082" y="452" width="12" height="88" fill="${W}.22)"/>`
-    +`<circle cx="656" cy="466" r="42" fill="${W}.16)"/><rect x="650" y="466" width="11" height="74" fill="${W}.20)"/>`,
-  region:`<rect x="700" y="180" width="330" height="290" rx="18" fill="${W}.16)"/>`
-    +`<path d="M700 300 Q790 250 880 300 T1030 290" stroke="${W}.30)" stroke-width="7" fill="none"/>`
-    +`<path d="M700 380 Q800 340 900 390 T1030 375" stroke="${W}.22)" stroke-width="7" fill="none"/>`
-    +`<g fill="${W}.55)"><path d="M790 210c-22 0-40 18-40 40 0 30 40 68 40 68s40-38 40-68c0-22-18-40-40-40zm0 55a15 15 0 110-30 15 15 0 010 30z"/>`
-    +`<path d="M950 300c-19 0-34 15-34 34 0 26 34 58 34 58s34-32 34-58c0-19-15-34-34-34zm0 47a13 13 0 110-26 13 13 0 010 26z" opacity=".8"/></g>`,
-  book:`<path d="M700 220h150c26 0 46 16 46 36v240c0-16-20-30-46-30H700z" fill="${W}.30)"/>`
-    +`<path d="M1046 220H896c-26 0-46 16-46 36v240c0-16 20-30 46-30h150z" fill="${W}.20)"/>`
-    +`<rect x="866" y="220" width="14" height="276" rx="4" fill="${W}.40)"/>`
-    +`<g fill="${W}.35)"><rect x="732" y="276" width="108" height="9" rx="4"/><rect x="732" y="308" width="88" height="9" rx="4"/><rect x="732" y="340" width="100" height="9" rx="4"/>`
-    +`<rect x="906" y="276" width="108" height="9" rx="4" opacity=".7"/><rect x="906" y="308" width="88" height="9" rx="4" opacity=".7"/></g>`,
-  abc:`<circle cx="866" cy="330" r="140" fill="${W}.16)"/>`
-    +`<ellipse cx="866" cy="330" rx="140" ry="58" stroke="${W}.30)" stroke-width="6" fill="none"/>`
-    +`<ellipse cx="866" cy="330" rx="58" ry="140" stroke="${W}.30)" stroke-width="6" fill="none"/>`
-    +`<line x1="726" y1="330" x2="1006" y2="330" stroke="${W}.30)" stroke-width="6"/>`
-    +`<g font-family="Helvetica,Arial" font-weight="700" fill="${W}.55)"><text x="1010" y="238" font-size="70">A</text><text x="1050" y="316" font-size="54">B</text><text x="1016" y="392" font-size="44">C</text></g>`,
-  math:`<circle cx="790" cy="270" r="86" fill="${W}.20)"/>`
-    +`<rect x="880" y="200" width="150" height="150" rx="14" fill="${W}.16)"/>`
-    +`<path d="M760 540 L900 380 L1040 540 Z" fill="${W}.24)"/>`
-    +`<g font-family="Georgia,serif" fill="${W}.60)"><text x="756" y="300" font-size="88">π</text><text x="920" y="300" font-size="76">∑</text></g>`
-    +`<g stroke="${W}.35)" stroke-width="6" fill="none"><path d="M700 470h120M760 410v120"/></g>`,
-  globe:`<circle cx="866" cy="330" r="150" fill="${W}.18)"/>`
-    +`<circle cx="866" cy="330" r="150" stroke="${W}.35)" stroke-width="6" fill="none"/>`
-    +`<ellipse cx="866" cy="330" rx="70" ry="150" stroke="${W}.28)" stroke-width="5" fill="none"/>`
-    +`<line x1="716" y1="330" x2="1016" y2="330" stroke="${W}.28)" stroke-width="5"/>`
-    +`<path d="M726 250q140 46 280 0M726 410q140 46 280 0" stroke="${W}.28)" stroke-width="5" fill="none"/>`
-    +`<path d="M800 250q40 30 20 60t30 60 60-10 10-70-50-60-70 20z" fill="${W}.30)"/>`,
-  flask:`<path d="M830 180h72v110l96 178a44 44 0 01-38 66H772a44 44 0 01-38-66l96-178z" fill="${W}.20)"/>`
-    +`<path d="M830 180h72v110l96 178a44 44 0 01-38 66H772a44 44 0 01-38-66l96-178z" stroke="${W}.42)" stroke-width="7" fill="none"/>`
-    +`<path d="M778 400h176l52 96a30 30 0 01-26 46H752a30 30 0 01-26-46z" fill="${W}.34)"/>`
-    +`<g fill="${W}.55)"><circle cx="812" cy="470" r="13"/><circle cx="866" cy="506" r="9"/><circle cx="910" cy="462" r="11"/></g>`
-    +`<rect x="818" y="164" width="96" height="18" rx="9" fill="${W}.45)"/>`,
-  list:`<g>${[0,1,2].map(i=>`<rect x="${700+i*118}" y="${330-i*40}" width="96" height="${210+i*40}" rx="10" fill="${W}${0.30-i*0.06})"/>`).join('')}</g>`
-    + win(714,364,2,3,30,30,42,52,.34)
-    +`<rect x="1054" y="250" width="96" height="290" rx="10" fill="${W}.14)"/>`
-    +`<path d="M700 210 L748 180 L796 210 Z" fill="${W}.34)"/>`,
-  cal:`<rect x="716" y="200" width="300" height="290" rx="18" fill="${W}.18)"/>`
-    +`<rect x="716" y="200" width="300" height="62" rx="18" fill="${W}.34)"/>`
-    +`<rect x="770" y="176" width="16" height="52" rx="8" fill="${W}.50)"/><rect x="946" y="176" width="16" height="52" rx="8" fill="${W}.50)"/>`
-    + win(752,296,5,3,34,34,54,56,.28)
-    +`<circle cx="860" cy="406" r="24" fill="${W}.60)"/>`,
-  chat:`<path d="M700 200h250a34 34 0 0134 34v150a34 34 0 01-34 34H800l-70 60v-60h-30a34 34 0 01-34-34V234a34 34 0 0134-34z" fill="${W}.24)"/>`
-    +`<g fill="${W}.45)"><circle cx="770" cy="310" r="14"/><circle cx="824" cy="310" r="14"/><circle cx="878" cy="310" r="14"/></g>`
-    +`<path d="M1010 300h140a30 30 0 0130 30v120a30 30 0 01-30 30h-30v50l-56-50h-54a30 30 0 01-30-30V330a30 30 0 0130-30z" fill="${W}.16)"/>`,
-  star:`<path d="M866 170l46 106 116 12-86 78 24 114-100-58-100 58 24-114-86-78 116-12z" fill="${W}.28)"/>`
-    +`<circle cx="720" cy="200" r="26" fill="${W}.22)"/><circle cx="1030" cy="480" r="34" fill="${W}.18)"/>`
-    +`<circle cx="1058" cy="212" r="16" fill="${W}.26)"/><circle cx="712" cy="486" r="20" fill="${W}.20)"/>`
-};
-const ART_MAP = {
-  'school-elementary':'school','school-middle':'school','school-high':'school',
-  'region':'region','all-schools':'list','subject-korean':'book','subject-english':'abc',
-  'subject-math':'math','subject-social':'globe','subject-science':'flask',
-  'subject-index':'star','guide':'cal','contact':'chat','og-default':'star'
-};
-function art(file){
-  const key = String(file||'og-default.jpg').replace(/\.jpg$/,'');
-  const c = ART_C[key] || ART_C['og-default'];
-  const shape = ART_S[ART_MAP[key] || 'star'];
-  const id = 'g'+hash(key)%100000;
-  return `<svg class="thumb-art" viewBox="0 0 1200 630" preserveAspectRatio="xMidYMid slice" aria-hidden="true">`
-    + `<defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1">`
-    + `<stop offset="0" stop-color="${c[0]}"/><stop offset="1" stop-color="${c[1]}"/></linearGradient></defs>`
-    + `<rect width="1200" height="630" fill="url(#${id})"/>`
-    + `<circle cx="1080" cy="90" r="200" fill="${W}.07)"/><circle cx="180" cy="560" r="240" fill="rgba(0,0,0,.07)"/>`
-    + shape + `</svg>`;
-}
-
 /* ══════════════ 썸네일 ══════════════ */
 function thumb(o){
   const src = CFG.img + photo(o.seed != null ? o.seed : hash(String(o.title||'')));
-  return `<div class="thumbw"><div class="thumb">${art(o.file)}<img src="${src}" alt="${esc(o.title)}" width="1200" height="630" fetchpriority="high" onerror="this.remove()">`
+  return `<div class="thumbw"><div class="thumb"><img src="${src}" alt="${esc(o.title)}" width="1200" height="630" fetchpriority="high" onerror="this.remove()">`
   + `<div class="thumb-ov"><div class="thumb-in"><span class="thumb-k">${esc(o.kicker||CFG.brandEn)}</span>`
   + `<h2 class="thumb-t">${esc(o.title)}</h2>`
   + (o.sub?`<p class="thumb-s">${esc(o.sub)}</p>`:'') + `</div></div></div></div>`;
@@ -612,10 +522,10 @@ function ctaBlock(t, seed){
               : pick(['다니는 학교와 학년, 현재 점수를 알려주시면 지금 필요한 과목 순서를 정리해 회신드립니다.',
                       '학교명과 학년만 남겨 주시면, 그 학교 기준으로 준비해야 할 과목을 짚어 드립니다.',
                       '내신 범위와 고민되는 과목을 남겨 주시면 학습 방향을 정리해 드립니다.'], s);
-  return `<section class="cta">`
-  + (CFG.img ? `<img class="cta-bg" src="${CFG.img}${photo(s+13)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : '')
-  + `<div class="wrap"><span class="k">💬 Consulting</span><h2>${h}</h2><p>${p}</p>`
-  + `<div class="cta-b"><a href="/contact" class="btn btn-f">상담 신청하기</a><a href="tel:${CFG.telRaw}" class="btn">📞 ${CFG.tel}</a></div></div></section>`;
+  return `<section class="ctaw"><div class="cta">`
+  + (CFG.img ? `<img class="cta-bg" src="${CFG.img}111.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : '')
+  + `<div class="cta-in"><span class="k">💬 Consulting</span><h2>${h}</h2><p>${p}</p>`
+  + `<div class="cta-b"><a href="/contact" class="btn btn-f">상담 신청하기</a><a href="tel:${CFG.telRaw}" class="btn">📞 ${CFG.tel}</a></div></div></div></section>`;
 }
 function faqBlock(list){ return `<div class="faq">${list.map(f=>`<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div>`; }
 function bcNav(items){
