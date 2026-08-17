@@ -11,7 +11,7 @@ const CFG = {
   telRaw  : '01068348080',
   gas     : '',                     // ★ Google Apps Script 배포 URL
   // ★ 깃허브에 이미지 올린 뒤 아래 주소만 바꾸면 썸네일이 전부 연결됩니다
-  img     : 'https://raw.githubusercontent.com/dandylsk80/king-study/main/image/',
+  img     : 'https://cdn.jsdelivr.net/gh/dandylsk80/king-study@main/image/',   // jsDelivr CDN (raw.githubusercontent.com은 429 차단됨)
   slogan  : '학교별 국·영·수·사·과 과외 정보'
 };
 
@@ -280,8 +280,9 @@ header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdro
 .ctaw{max-width:var(--max);margin:0 auto;padding:44px 32px}
 .cta{position:relative;overflow:hidden;border-radius:var(--r);background:linear-gradient(120deg,var(--vio) 0%,#8B5CF6 55%,var(--coral) 130%);color:#fff;padding:48px 32px}
 .cta-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
-.cta::after{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(115deg,rgba(74,50,200,.86) 0%,rgba(107,78,255,.72) 46%,rgba(228,72,110,.70) 120%)}
-.cta h2,.cta p,.cta .k{text-shadow:0 1px 10px rgba(30,16,70,.30)}
+.cta::after{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(100deg,rgba(8,6,18,.88) 0%,rgba(8,6,18,.78) 30%,rgba(8,6,18,.42) 58%,rgba(8,6,18,.08) 82%,rgba(8,6,18,0) 100%)}
+.cta h2{text-shadow:0 2px 16px rgba(0,0,0,.55)}
+.cta p{text-shadow:0 1px 12px rgba(0,0,0,.6);color:rgba(255,255,255,.94)}
 .cta-in{position:relative;z-index:2}
 .cta h2{font-size:clamp(21px,3.3vw,32px);font-weight:900;letter-spacing:-.045em;line-height:1.32;margin:16px 0 12px;word-break:keep-all}
 .cta p{color:rgba(255,255,255,.85);font-size:14.5px;max-width:560px;word-break:keep-all}
@@ -372,7 +373,8 @@ body{font-size:15.5px}
 .sh{gap:8px;margin-bottom:20px}
 .two{gap:0}
 .ctaw{padding:28px 18px}
-.cta{padding:34px 22px;border-radius:var(--rs)}.fcols{gap:28px}
+.cta{padding:34px 22px;border-radius:var(--rs)}
+.cta::after{background:linear-gradient(175deg,rgba(8,6,18,.86) 0%,rgba(8,6,18,.74) 55%,rgba(8,6,18,.52) 100%)}.fcols{gap:28px}
 .fall{flex-direction:column;align-items:flex-start;gap:9px}
 .fall a{margin-left:0;width:100%;text-align:center}
 .fab{right:12px;bottom:12px}.fab a{width:44px;height:44px}
