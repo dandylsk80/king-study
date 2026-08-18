@@ -510,6 +510,7 @@ ${o.keywords?`<meta name="keywords" content="${esc(o.keywords)}">`:''}
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="shortcut icon" href="/favicon.ico">
 <link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="application/rss+xml" title="${CFG.brand} RSS" href="/rss.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>${CSS}</style>
@@ -1280,9 +1281,58 @@ Disallow: /
 
 Sitemap: ${CFG.origin}/sitemap.xml
 Sitemap: ${CFG.origin}/sitemap-naver.xml
+Sitemap: ${CFG.origin}/rss.xml
 
 #DaumWebMasterTool:7526cd88b4c4de982139feedcab58e6931b38ac8f745884e357220bba2d9aa7f:UFssrC1rBul3f0roZabktg==
 `, {headers:{'content-type':'text/plain;charset=UTF-8','cache-control':'public,max-age=86400'}});
+}
+
+/* ══════════════ RSS 2.0 (네이버 제출용) ══════════════ */
+function rssDate(iso){
+  const d = new Date(iso + 'T09:00:00+09:00');
+  const D = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getUTCDay()];
+  const M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getUTCMonth()];
+  const p2 = n => String(n).padStart(2,'0');
+  return `${D}, ${p2(d.getUTCDate())} ${M} ${d.getUTCFullYear()} ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}:${p2(d.getUTCSeconds())} GMT`;
+}
+function rssFeed(){
+  build();
+  // 수정일이 오늘인 항목(seed%14===0)만 골라 100개가 차면 즉시 중단 — 전수 정렬 없이 처리
+  const top = [];
+  for (let i = 0; i < LIST.length && top.length < 100; i++) {
+    const r = LIST[i];
+    const u = '/school/' + r.slug;
+    if (hash(u) % 14 === 0) {
+      top.push({ url:u, seed:hash(u),
+        title: `${r.full} 과외 — 국어·영어·수학·사회·과학 안내`,
+        desc: `${SIDO_FULL[r.se]} ${r.gk} ${r.full} 학생을 위한 과목별 과외 안내와 내신 준비 방법.` });
+    }
+    for (const k of SUBJ_KEYS) {
+      if (top.length >= 100) break;
+      const u2 = u + '/' + k;
+      if (hash(u2) % 14 !== 0) continue;
+      top.push({ url:u2, seed:hash(u2),
+        title: `${r.full} ${SUBJ[k].ko}과외 — ${r.gk} ${GSUF[r.g]} 내신 대비`,
+        desc: `${r.full} ${SUBJ[k].ko} 내신 대비 4주 로드맵과 학년별 학습 순서 안내.` });
+    }
+  }
+  const now = rssDate(fmtISO(Date.now()));
+  const body = top.map(x => {
+    const d = dates(x.seed);
+    return `<item><title>${esc(x.title)}</title><link>${CFG.origin}${x.url}</link>`
+      + `<guid isPermaLink="true">${CFG.origin}${x.url}</guid>`
+      + `<description>${esc(x.desc)}</description>`
+      + `<pubDate>${rssDate(d.modISO)}</pubDate></item>`;
+  }).join('');
+  return new Response(
+    `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel>`
+    + `<title>${esc(CFG.brand)} — 학교별 국어·영어·수학·사회·과학 과외</title>`
+    + `<link>${CFG.origin}</link>`
+    + `<description>전국 ${LIST.length.toLocaleString()}개 초·중·고 학교별 과목 과외 정보</description>`
+    + `<language>ko</language><lastBuildDate>${now}</lastBuildDate>`
+    + `<generator>${esc(CFG.brandEn)}</generator>`
+    + body + `</channel></rss>`,
+    {headers:{'content-type':'application/rss+xml;charset=UTF-8','cache-control':'public,max-age=3600'}});
 }
 
 /* ══════════════ 사이트맵 ══════════════ */
@@ -1374,6 +1424,7 @@ export default {
     if (ogm) { const r = ogPng(ogm[1]); return r || notFound(); }
     if (p === '/robots.txt') return robots();
     if (p === '/llms.txt' || p === '/ai.txt') return llmsTxt();
+    if (p === '/rss.xml' || p === '/rss') return rssFeed();
     if (p === '/sitemap.xml') return sitemapIndex();
     if (p === '/sitemap-main.xml') return sitemapMain();
     if (p === '/sitemap-naver.xml') return sitemapNaver();
