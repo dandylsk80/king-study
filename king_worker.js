@@ -1291,15 +1291,15 @@ Sitemap: ${CFG.origin}/rss.xml
 const INDEXNOW_KEY = '75a5ac2bb2094bf9aa566c75b4c03b91';
 
 /* 제출 대상 URL 목록
-   고정 페이지 전체 + 학교 페이지를 날짜별 구간으로 나눠 순환 제출
-   (1회 한도 10,000건 / 1,500개교 × 6페이지 = 9,000건씩 → 9일이면 전체 1바퀴) */
+   고정 페이지 전체 + 학교 페이지를 시간별 구간으로 나눠 순환 제출
+   (1회 한도 10,000건 / 1,500개교 × 6페이지 = 9,000건씩 → 9시간이면 전체 1바퀴) */
 const IN_CHUNK = 1500;
 function indexnowUrls(){
   build();
   const out = staticUrls().slice();
   const chunks = Math.ceil(LIST.length / IN_CHUNK);
-  const day = Math.floor(Date.now() / DAY);
-  const from = (day % chunks) * IN_CHUNK;
+  const hour = Math.floor(Date.now() / 3600000);
+  const from = (hour % chunks) * IN_CHUNK;
   const slice = LIST.slice(from, from + IN_CHUNK);
   for (const r of slice) {
     const u = '/school/' + r.slug;
@@ -1427,6 +1427,11 @@ function notFound(){
 
 /* ══════════════ 라우터 ══════════════ */
 export default {
+  /* Cloudflare Cron Trigger — 매시간 IndexNow 자동 제출 */
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(indexnowPing());
+  },
+
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     let p = url.pathname;
