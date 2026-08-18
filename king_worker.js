@@ -486,8 +486,8 @@ ${o.keywords?`<meta name="keywords" content="${esc(o.keywords)}">`:''}
 <meta name="publisher" content="${CFG.brand}">
 <meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#6B4EFF">
-<meta name="naver-site-verification" content="">
-<meta name="google-site-verification" content="">
+<meta name="naver-site-verification" content="08e0843aad0abc040662d1b4c470c15e0845ecda">
+<meta name="google-site-verification" content="rMjWboetqP2b1Z17BnqV-rLbaT0iOcYao3_0FyPMx5c">
 <meta name="date" content="${d.pubISO}">
 <meta name="lastmod" content="${d.modISO}">
 <meta property="article:published_time" content="${d.pubISO}T09:00:00+09:00">
@@ -1280,6 +1280,8 @@ Disallow: /
 
 Sitemap: ${CFG.origin}/sitemap.xml
 Sitemap: ${CFG.origin}/sitemap-naver.xml
+
+#DaumWebMasterTool:7526cd88b4c4de982139feedcab58e6931b38ac8f745884e357220bba2d9aa7f:UFssrC1rBul3f0roZabktg==
 `, {headers:{'content-type':'text/plain;charset=UTF-8','cache-control':'public,max-age=86400'}});
 }
 
