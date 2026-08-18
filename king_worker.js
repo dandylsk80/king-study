@@ -313,6 +313,14 @@ header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdro
 .fi,.fs,.ft{width:100%;padding:14px 16px;border:2px solid var(--line2);border-radius:var(--rs);background:#fff;font-family:var(--sans);font-size:16px;color:var(--ink);outline:none;transition:border .16s;-webkit-appearance:none}
 .fi:focus,.fs:focus,.ft:focus{border-color:var(--vio)}
 .ft{min-height:118px;resize:vertical}
+.modal{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(16,12,42,.58);padding:20px}
+.modal.on{display:flex}
+.modal-box{background:#fff;border-radius:var(--r);padding:34px 28px 28px;max-width:360px;width:100%;text-align:center;box-shadow:0 24px 70px rgba(20,16,50,.32)}
+.modal-ic{width:60px;height:60px;margin:0 auto 18px;border-radius:50%;background:var(--mint);color:#fff;font-size:30px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.modal-t{font-size:19px;font-weight:900;letter-spacing:-.035em;margin-bottom:10px}
+.modal-p{font-size:14px;color:var(--ink2);line-height:1.7;word-break:keep-all}
+.modal-b{display:flex;gap:8px;margin-top:22px}
+.modal-b .btn{flex:1;padding:13px 10px;font-size:13.5px}
 .addr{display:flex;gap:8px}
 .addr .fi{flex:1;min-width:0;cursor:pointer;background:var(--bg2)}
 .addrbtn{flex-shrink:0;padding:0 20px;border:2px solid var(--vio);background:var(--vio);color:#fff;border-radius:var(--rs);font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap;transition:background .15s}
@@ -1095,9 +1103,9 @@ function pageContact(){
   <section class="sec"><div class="wrap"><div class="form">
   <div class="fr"><label class="fl" for="f-name">학생 이름 <b>*</b></label><input class="fi" id="f-name" autocomplete="name" placeholder="학생 이름을 입력해 주세요"></div>
   <div class="fr"><label class="fl" for="f-phone">연락처 <b>*</b></label><input class="fi" id="f-phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="010-0000-0000"></div>
-  <div class="fr"><label class="fl" for="f-addr">주소 <b>*</b></label>
+  <div class="fr"><label class="fl" for="f-addr">주소 · 상세주소 <b>*</b></label>
     <div class="addr"><input class="fi" id="f-addr" readonly onclick="findAddr()" placeholder="클릭하면 주소를 검색할 수 있습니다"><button class="addrbtn" type="button" onclick="findAddr()">주소 검색</button></div>
-    <input class="fi" id="f-addr2" style="margin-top:8px" placeholder="상세주소 (동/호수 등)"></div>
+    <input class="fi" id="f-addr2" style="margin-top:8px" placeholder="상세주소 (동/호수 등) — 필수"></div>
   <div class="fr"><label class="fl" for="f-grade">학년 <b>*</b></label><select class="fs" id="f-grade"><option value="">선택해 주세요</option>${['초1','초2','초3','초4','초5','초6','중1','중2','중3','고1','고2','고3'].map(g=>`<option>${g}</option>`).join('')}</select></div>
   <div class="fr"><label class="fl" for="f-subject">희망 과목 <b>*</b></label><select class="fs" id="f-subject"><option value="">선택해 주세요</option>${SUBJ_KEYS.map(k=>`<option>${SUBJ[k].ko}</option>`).join('')}<option>2과목 이상</option></select></div>
   <div class="fr"><label class="fl" for="f-msg">문의 내용</label><textarea class="ft" id="f-msg" placeholder="현재 성적, 고민되는 부분 등을 자유롭게 적어 주세요"></textarea></div>
@@ -1105,6 +1113,14 @@ function pageContact(){
   <button class="fbtn" id="f-send" onclick="sendForm()">상담 신청하기</button>
   <p id="f-res" style="margin-top:14px;font-size:14px"></p>
   </div></div></section>
+  <div class="modal" id="okmodal">
+    <div class="modal-box">
+      <div class="modal-ic">✓</div>
+      <div class="modal-t">상담 신청이 접수되었습니다</div>
+      <p class="modal-p">확인 후 순차적으로 연락드리겠습니다.<br>급하신 경우 ${CFG.tel} 로 연락 주세요.</p>
+      <div class="modal-b"><button type="button" class="btn btn-f" onclick="closeModal()">확인</button><a href="tel:${CFG.telRaw}" class="btn btn-o">📞 전화 상담</a></div>
+    </div>
+  </div>
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"><\/script>
   <script>
   function findAddr(){
@@ -1118,17 +1134,18 @@ function pageContact(){
       document.getElementById('f-addr2').focus();
     }}).open();
   }
+  function closeModal(){document.getElementById('okmodal').classList.remove('on');}
   function sendForm(){
     var g=function(i){return (document.getElementById(i).value||'').trim();};
     var addr=g('f-addr'), a2=g('f-addr2');
     var d={name:g('f-name'),phone:g('f-phone'),address:(a2?addr+' '+a2:addr),grade:g('f-grade'),subject:g('f-subject'),message:g('f-msg'),page:location.pathname};
     var res=document.getElementById('f-res'), btn=document.getElementById('f-send');
-    if(!d.name||!d.phone||!addr||!d.grade||!d.subject){res.style.color='#8C3A2B';res.textContent='필수 항목을 모두 입력해 주세요.';return;}
+    if(!d.name||!d.phone||!addr||!a2||!d.grade||!d.subject){res.style.color='#FF5C7A';res.textContent=(addr&&!a2)?'상세주소를 입력해 주세요.':'필수 항목을 모두 입력해 주세요.';return;}
     btn.disabled=true;btn.textContent='전송 중...';res.textContent='';
     fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})
     .then(function(r){return r.json();})
     .then(function(j){
-      if(j&&j.ok){res.style.color='#141210';res.textContent='✅ 상담 신청이 접수되었습니다. 확인 후 연락드리겠습니다.';btn.textContent='접수 완료';}
+      if(j&&j.ok){res.textContent='';btn.textContent='접수 완료';document.getElementById('okmodal').classList.add('on');}
       else{res.style.color='#8C3A2B';res.textContent='전송에 실패했습니다. 전화로 연락 주시면 빠르게 도와드리겠습니다.';btn.disabled=false;btn.textContent='다시 시도하기';}
     })
     .catch(function(){res.style.color='#8C3A2B';res.textContent='전송에 실패했습니다. 전화로 연락 주시면 빠르게 도와드리겠습니다.';btn.disabled=false;btn.textContent='다시 시도하기';});
@@ -1325,12 +1342,17 @@ export default {
       try {
         const d = await request.json();
         if (!CFG.gas) return new Response(JSON.stringify({ok:false,err:'no-endpoint'}), {status:200, headers:{'content-type':'application/json'}});
+        let pg = d.page || '';
+        if (!pg) {
+          const ref = request.headers.get('referer') || '';
+          try { pg = ref ? new URL(ref).pathname : '/contact'; } catch (x) { pg = '/contact'; }
+        }
         const r = await fetch(CFG.gas, {
           method:'POST',
           headers:{'Content-Type':'application/json'},
           body: JSON.stringify({
             name:d.name||'', phone:d.phone||'', address:d.address||'', grade:d.grade||'',
-            subject:d.subject||'', message:d.message||'', page:d.page||''
+            subject:d.subject||'', message:d.message||'', page:pg
           })
         });
         return new Response(JSON.stringify({ok:r.ok}), {status:200, headers:{'content-type':'application/json'}});
