@@ -1287,6 +1287,48 @@ Sitemap: ${CFG.origin}/rss.xml
 `, {headers:{'content-type':'text/plain;charset=UTF-8','cache-control':'public,max-age=86400'}});
 }
 
+/* ══════════════ IndexNow (네이버 + Bing 즉시 색인 요청) ══════════════ */
+const INDEXNOW_KEY = '75a5ac2bb2094bf9aa566c75b4c03b91';
+
+/* 제출 대상 URL 목록
+   고정 페이지 전체 + 학교 페이지를 날짜별 구간으로 나눠 순환 제출
+   (1회 한도 10,000건 / 1,500개교 × 6페이지 = 9,000건씩 → 9일이면 전체 1바퀴) */
+const IN_CHUNK = 1500;
+function indexnowUrls(){
+  build();
+  const out = staticUrls().slice();
+  const chunks = Math.ceil(LIST.length / IN_CHUNK);
+  const day = Math.floor(Date.now() / DAY);
+  const from = (day % chunks) * IN_CHUNK;
+  const slice = LIST.slice(from, from + IN_CHUNK);
+  for (const r of slice) {
+    const u = '/school/' + r.slug;
+    out.push(u);
+    for (const k of SUBJ_KEYS) out.push(u + '/' + k);
+  }
+  return out.map(u => CFG.origin + u);
+}
+
+async function indexnowPing(){
+  const urlList = indexnowUrls();
+  const payload = {
+    host: CFG.origin.replace(/^https?:\/\//, ''),
+    key: INDEXNOW_KEY,
+    keyLocation: CFG.origin + '/' + INDEXNOW_KEY + '.txt',
+    urlList: urlList
+  };
+  const opt = {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json; charset=utf-8'},
+    body: JSON.stringify(payload)
+  };
+  let naver = 0, bing = 0;
+  try { naver = (await fetch('https://searchadvisor.naver.com/indexnow', opt)).status; } catch (e) { naver = -1; }
+  try { bing  = (await fetch('https://api.indexnow.org/indexnow', opt)).status; } catch (e) { bing = -1; }
+  return new Response(JSON.stringify({ ok:true, urlCount: urlList.length, naver, bing }),
+    {headers:{'content-type':'application/json'}});
+}
+
 /* ══════════════ RSS 2.0 (네이버 제출용) ══════════════ */
 function rssDate(iso){
   const d = new Date(iso + 'T09:00:00+09:00');
@@ -1416,6 +1458,9 @@ export default {
     if (p !== '/' && p.endsWith('/')) return Response.redirect(url.origin + p.slice(0,-1) + url.search, 301);
     p = decodeURIComponent(p);
 
+    if (p === '/' + INDEXNOW_KEY + '.txt')
+      return new Response(INDEXNOW_KEY, {headers:{'content-type':'text/plain;charset=utf-8'}});
+    if (p === '/api/indexnow') return indexnowPing();
     if (p === '/favicon.ico') return faviconIco();
     if (p === '/apple-touch-icon.png' || p === '/apple-touch-icon-precomposed.png') return appleIcon();
     if (p === '/icon.svg') return iconSvg();
