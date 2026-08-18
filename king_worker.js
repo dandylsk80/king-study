@@ -9,7 +9,7 @@ const CFG = {
   origin  : 'https://king-study.com',
   tel     : '010-6834-8080',
   telRaw  : '01068348080',
-  gas     : '',                     // ★ Google Apps Script 배포 URL
+  gas     : 'https://script.google.com/macros/s/AKfycbySwAKy0-0iN006m0wVhcovXn-kdk3HVl5vCVzXo5mocwWzDMecG04iqRi8Tf18yBvN/exec',
   // ★ 깃허브에 이미지 올린 뒤 아래 주소만 바꾸면 썸네일이 전부 연결됩니다
   img     : 'https://cdn.jsdelivr.net/gh/dandylsk80/king-study@main/image/',   // jsDelivr CDN (raw.githubusercontent.com은 429 차단됨)
   slogan  : '학교별 국·영·수·사·과 과외 정보'
@@ -1121,7 +1121,7 @@ function pageContact(){
   function sendForm(){
     var g=function(i){return (document.getElementById(i).value||'').trim();};
     var addr=g('f-addr'), a2=g('f-addr2');
-    var d={name:g('f-name'),phone:g('f-phone'),address:(a2?addr+' '+a2:addr),grade:g('f-grade'),subject:g('f-subject'),message:g('f-msg')};
+    var d={name:g('f-name'),phone:g('f-phone'),address:(a2?addr+' '+a2:addr),grade:g('f-grade'),subject:g('f-subject'),message:g('f-msg'),page:location.pathname};
     var res=document.getElementById('f-res'), btn=document.getElementById('f-send');
     if(!d.name||!d.phone||!addr||!d.grade||!d.subject){res.style.color='#8C3A2B';res.textContent='필수 항목을 모두 입력해 주세요.';return;}
     btn.disabled=true;btn.textContent='전송 중...';res.textContent='';
@@ -1324,12 +1324,15 @@ export default {
     if (p === '/api/contact' && request.method === 'POST') {
       try {
         const d = await request.json();
-        const params = new URLSearchParams({
-          name:d.name||'', phone:d.phone||'', address:d.address||'', grade:d.grade||'',
-          subject:d.subject||'', message:d.message||'', site:'king-study'
-        });
         if (!CFG.gas) return new Response(JSON.stringify({ok:false,err:'no-endpoint'}), {status:200, headers:{'content-type':'application/json'}});
-        const r = await fetch(CFG.gas + '?' + params.toString(), {method:'GET', redirect:'follow'});
+        const r = await fetch(CFG.gas, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({
+            name:d.name||'', phone:d.phone||'', address:d.address||'', grade:d.grade||'',
+            subject:d.subject||'', message:d.message||'', page:d.page||''
+          })
+        });
         return new Response(JSON.stringify({ok:r.ok}), {status:200, headers:{'content-type':'application/json'}});
       } catch (e) {
         return new Response(JSON.stringify({ok:false}), {status:200, headers:{'content-type':'application/json'}});
