@@ -51,6 +51,97 @@ function gugunEn(g){ return rom(g.replace(/(특별자치시|광역시|특별시|
 
 /* ── 인덱스 ── */
 let IDX=null, LIST=null, GIDX=null, SIDX=null, SORTED=null;
+/* ── 텔레그램 알림 ─────────────────────────────────────────
+   전화·상담 버튼 클릭 시 즉시 알림. 상담 코드(/api/contact)와 무관하게 동작. */
+const TG_TOKEN = '8101954996:AAGNV225WaNL8Zqh9OxtmP1WNzlbquNaq9s';
+const TG_CHAT  = '8649422714';
+const TG_LABEL = { tel: '전화 버튼 클릭', contact: '상담 버튼 클릭' };
+
+function tgDescribe(path) {
+  const seg = String(path || '').split('?')[0].split('/').filter(Boolean);
+  if (!seg.length) return '메인';
+  const p0 = seg[0];
+  if (p0 === 'contact') return '상담 신청 페이지';
+  if (p0 === 'guide') return '학습 가이드';
+  if (p0 === 'hub') {
+    if (!seg[1]) return '지역별 학교';
+    const sido = SIDO_FULL[seg[1]] || SIDO[seg[1]] || seg[1];
+    if (!seg[2]) return '지역 · ' + sido;
+    let gk = seg[2];
+    try {
+      build();
+      const row = (SIDX[seg[1]] || []).find(x => x.ge === seg[2]);
+      if (row) gk = row.gk;
+    } catch (e) { }
+    return '지역 · ' + sido + ' ' + gk;
+  }
+  if (p0 === 'subject') {
+    if (!seg[1]) return '과목 전체';
+    return '과목 · ' + ((SUBJ[seg[1]] || {}).ko || seg[1]);
+  }
+  if (p0 === 'all-schools') return '전체 학교 목록' + (seg[1] ? ' (' + seg[1] + '쪽)' : '');
+  if (p0 === 'school' && seg[1]) {
+    try {
+      build();
+      const r = IDX[seg[1]];
+      if (r) {
+        const base = (SIDO[r.se] || r.se) + ' ' + r.gk + ' ' + r.full;
+        return seg[2] ? base + ' · ' + ((SUBJ[seg[2]] || {}).ko || seg[2]) : base;
+      }
+    } catch (e) { }
+    return '학교 페이지';
+  }
+  return '일반 페이지';
+}
+
+function tgRef(ref) {
+  if (!ref) return '직접 방문 또는 알 수 없음';
+  try {
+    const h = new URL(ref).hostname.replace(/^www\./, '');
+    if (h.indexOf('king-study') === 0) return '사이트 내부 이동';
+    if (h.includes('naver')) return '네이버';
+    if (h.includes('google')) return '구글';
+    if (h.includes('daum')) return '다음';
+    if (h.includes('bing')) return 'Bing';
+    if (h.includes('kakao')) return '카카오';
+    if (h.includes('instagram')) return '인스타그램';
+    if (h.includes('facebook')) return '페이스북';
+    if (h.includes('youtube')) return '유튜브';
+    return h;
+  } catch (e) { return '알 수 없음'; }
+}
+
+function tgTime() {
+  const d = new Date(Date.now() + 9 * 3600000);
+  const z = n => String(n).padStart(2, '0');
+  return d.getUTCFullYear() + '-' + z(d.getUTCMonth() + 1) + '-' + z(d.getUTCDate()) +
+    ' ' + z(d.getUTCHours()) + ':' + z(d.getUTCMinutes());
+}
+
+const TG_BOT_RE = /bot|crawl|spider|slurp|facebookexternalhit|curl|wget|python|axios|headless|lighthouse|semrush|ahrefs|bytespider|applebot|monitor|uptime|scan/i;
+
+async function tgNotify(type, page, ref, ua) {
+  if (!TG_TOKEN || TG_TOKEN.indexOf('PASTE_') === 0) return;
+  if (!TG_CHAT || TG_CHAT.indexOf('PASTE_') === 0) return;
+  const label = TG_LABEL[type];
+  if (!label) return;
+  const L = [];
+  L.push((type === 'tel' ? '📞 ' : '📝 ') + label);
+  L.push('');
+  L.push('사이트: ' + CFG.brand + ' (king-study.com)');
+  L.push('페이지: ' + CFG.origin + page);
+  L.push('한글: ' + tgDescribe(page));
+  L.push('유입: ' + tgRef(ref));
+  L.push('기기: ' + (/Mobile|Android|iPhone|iPad/i.test(ua || '') ? '모바일' : 'PC'));
+  L.push('시각: ' + tgTime() + ' (KST)');
+  try {
+    await fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TG_CHAT, text: L.join('\n'), disable_web_page_preview: true })
+    });
+  } catch (e) { }
+}
+
 function build(){
   if (IDX) return;
   IDX={}; LIST=[]; GIDX={}; SIDX={};
@@ -516,7 +607,7 @@ ${o.keywords?`<meta name="keywords" content="${esc(o.keywords)}">`:''}
 <style>${CSS}</style>
 ${ld.map(x=>`<script type="application/ld+json">${JSON.stringify(x)}<\/script>`).join('')}
 </head>
-<body>${header()}<main>${o.body}</main>${footer()}</body></html>`;
+<body>${header()}<main>${o.body}</main>${footer()}<script>(function(){function t(y){try{fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:y,page:location.pathname,ref:document.referrer}),keepalive:true});}catch(e){}}document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a)return;var h=a.getAttribute('href')||'';if(h.indexOf('tel:')===0)t('tel');else if(h.indexOf('/contact')===0)t('contact');},true);})();<\/script></body></html>`;
 }
 
 function html(s, st){ return new Response(s, {status:st||200, headers:{'content-type':'text/html;charset=UTF-8','cache-control':'public,max-age=3600','x-robots-tag':'index,follow'}}); }
@@ -1458,6 +1549,22 @@ export default {
       } catch (e) {
         return new Response(JSON.stringify({ok:false}), {status:200, headers:{'content-type':'application/json'}});
       }
+    }
+
+    /* 전환 추적 + 텔레그램 알림 (상담 코드와 무관, 독립 동작) */
+    if (p === '/api/track' && request.method === 'POST') {
+      try {
+        const b = await request.json();
+        const ua = request.headers.get('User-Agent') || '';
+        if (!TG_BOT_RE.test(ua) && TG_LABEL[b.type]) {
+          const t = tgNotify(b.type, (b.page || '/').slice(0, 300), b.ref || '', ua);
+          if (ctx && ctx.waitUntil) ctx.waitUntil(t); else await t;
+        }
+      } catch (e) { }
+      return new Response(JSON.stringify({ok:true}), {headers:{'content-type':'application/json','access-control-allow-origin':'*'}});
+    }
+    if (p === '/api/track' && request.method === 'OPTIONS') {
+      return new Response(null, {headers:{'access-control-allow-origin':'*','access-control-allow-methods':'POST,OPTIONS','access-control-allow-headers':'Content-Type'}});
     }
 
     if (p !== '/' && p.endsWith('/')) return Response.redirect(url.origin + p.slice(0,-1) + url.search, 301);
