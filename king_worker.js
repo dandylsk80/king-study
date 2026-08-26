@@ -53,8 +53,6 @@ function gugunEn(g){ return rom(g.replace(/(특별자치시|광역시|특별시|
 let IDX=null, LIST=null, GIDX=null, SIDX=null, SORTED=null;
 /* ── 텔레그램 알림 ─────────────────────────────────────────
    전화·상담 버튼 클릭 시 즉시 알림. 상담 코드(/api/contact)와 무관하게 동작. */
-const TG_TOKEN = '8101954996:AAGNV225WaNL8Zqh9OxtmP1WNzlbquNaq9s';
-const TG_CHAT  = '8649422714';
 const TG_LABEL = { tel: '전화 버튼 클릭', contact: '상담 버튼 클릭' };
 
 function tgDescribe(path) {
@@ -120,9 +118,10 @@ function tgTime() {
 
 const TG_BOT_RE = /bot|crawl|spider|slurp|facebookexternalhit|curl|wget|python|axios|headless|lighthouse|semrush|ahrefs|bytespider|applebot|monitor|uptime|scan/i;
 
-async function tgNotify(type, page, ref, ua) {
-  if (!TG_TOKEN || TG_TOKEN.indexOf('PASTE_') === 0) return;
-  if (!TG_CHAT || TG_CHAT.indexOf('PASTE_') === 0) return;
+async function tgNotify(env, type, page, ref, ua) {
+  const TG_TOKEN = env && env.TG_TOKEN;
+  const TG_CHAT = env && env.TG_CHAT;
+  if (!TG_TOKEN || !TG_CHAT) return;
   const label = TG_LABEL[type];
   if (!label) return;
   const L = [];
@@ -1557,7 +1556,7 @@ export default {
         const b = await request.json();
         const ua = request.headers.get('User-Agent') || '';
         if (!TG_BOT_RE.test(ua) && TG_LABEL[b.type]) {
-          const t = tgNotify(b.type, (b.page || '/').slice(0, 300), b.ref || '', ua);
+          const t = tgNotify(env, b.type, (b.page || '/').slice(0, 300), b.ref || '', ua);
           if (ctx && ctx.waitUntil) ctx.waitUntil(t); else await t;
         }
       } catch (e) { }
