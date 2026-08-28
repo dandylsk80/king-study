@@ -1559,6 +1559,12 @@ export default {
           const t = tgNotify(env, b.type, (b.page || '/').slice(0, 300), b.ref || '', ua);
           if (ctx && ctx.waitUntil) ctx.waitUntil(t); else await t;
         }
+        const ip = request.headers.get('CF-Connecting-IP') || '';
+        const ts = new Date().toISOString();
+        if (env && env.DB && (b.type === 'tel' || b.type === 'sms' || b.type === 'contact' || b.type === 'view')) {
+          await env.DB.prepare('INSERT INTO events (site,type,page,ref,ip,ts) VALUES (?,?,?,?,?,?)')
+            .bind('king-study', b.type, (b.page || '').slice(0, 300), (b.ref || '').slice(0, 120), ip, ts).run();
+        }
       } catch (e) { }
       return new Response(JSON.stringify({ok:true}), {headers:{'content-type':'application/json','access-control-allow-origin':'*'}});
     }
