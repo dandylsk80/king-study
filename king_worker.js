@@ -64,14 +64,14 @@ function tgDescribe(path) {
   if (p0 === 'hub') {
     if (!seg[1]) return '지역별 학교';
     const sido = SIDO_FULL[seg[1]] || SIDO[seg[1]] || seg[1];
-    if (!seg[2]) return '지역 · ' + sido;
+    if (!seg[2]) return sido + ' 과외';
     let gk = seg[2];
     try {
       build();
       const row = (SIDX[seg[1]] || []).find(x => x.ge === seg[2]);
       if (row) gk = row.gk;
     } catch (e) { }
-    return '지역 · ' + sido + ' ' + gk;
+    return sido + ' ' + gk + ' 과외';
   }
   if (p0 === 'subject') {
     if (!seg[1]) return '과목 전체';
@@ -84,7 +84,7 @@ function tgDescribe(path) {
       const r = IDX[seg[1]];
       if (r) {
         const base = (SIDO[r.se] || r.se) + ' ' + r.gk + ' ' + r.full;
-        return seg[2] ? base + ' · ' + ((SUBJ[seg[2]] || {}).ko || seg[2]) : base;
+        return (seg[2] ? base + ' ' + ((SUBJ[seg[2]] || {}).ko || seg[2]) : base) + ' 과외';
       }
     } catch (e) { }
     return '학교 페이지';
@@ -129,7 +129,7 @@ async function tgNotify(env, type, page, ref, ua) {
   L.push('');
   L.push('사이트: ' + CFG.brand + ' (king-study.com)');
   L.push('페이지: ' + CFG.origin + page);
-  L.push('한글: ' + tgDescribe(page));
+  L.push('검색 키워드: ' + tgDescribe(page));
   L.push('유입: ' + tgRef(ref));
   L.push('기기: ' + (/Mobile|Android|iPhone|iPad/i.test(ua || '') ? '모바일' : 'PC'));
   L.push('시각: ' + tgTime() + ' (KST)');
