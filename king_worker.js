@@ -606,7 +606,7 @@ ${o.keywords?`<meta name="keywords" content="${esc(o.keywords)}">`:''}
 <style>${CSS}</style>
 ${ld.map(x=>`<script type="application/ld+json">${JSON.stringify(x)}<\/script>`).join('')}
 </head>
-<body>${header()}<main>${o.body}</main>${footer()}<script>(function(){function t(y){try{fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:y,page:location.pathname,ref:document.referrer}),keepalive:true});}catch(e){}}document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a)return;var h=a.getAttribute('href')||'';if(h.indexOf('tel:')===0)t('tel');else if(h.indexOf('/contact')===0)t('contact');},true);})();<\/script></body></html>`;
+<body>${header()}<main>${o.body}</main>${footer()}<script>(function(){function t(y){try{fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:y,page:location.pathname,ref:document.referrer}),keepalive:true});}catch(e){}}if(location.pathname.indexOf('/api/')!==0)t('view');document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a)return;var h=a.getAttribute('href')||'';if(h.indexOf('tel:')===0)t('tel');else if(h.indexOf('/contact')===0)t('contact');},true);})();<\/script></body></html>`;
 }
 
 function html(s, st){ return new Response(s, {status:st||200, headers:{'content-type':'text/html;charset=UTF-8','cache-control':'public,max-age=3600','x-robots-tag':'index,follow'}}); }
