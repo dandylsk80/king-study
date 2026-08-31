@@ -141,7 +141,7 @@ function gugunEn(g){ return rom(g.replace(/(특별자치시|광역시|특별시|
 let IDX=null, LIST=null, GIDX=null, SIDX=null, SORTED=null;
 /* ── 텔레그램 알림 ─────────────────────────────────────────
    전화·상담 버튼 클릭 시 즉시 알림. 상담 코드(/api/contact)와 무관하게 동작. */
-const TG_LABEL = { tel: '전화 버튼 클릭', contact: '상담 버튼 클릭' };
+const TG_LABEL = { tel: '전화 버튼 클릭', sms: '문자 버튼 클릭', contact: '상담 버튼 클릭' };
 
 function tgDescribe(path) {
   const seg = String(path || '').split('?')[0].split('/').filter(Boolean);
@@ -605,6 +605,7 @@ function footer(){
   + `<p class="fno">안내 · 본 사이트는 학습 정보 제공을 목적으로 하며, 게시된 학교 정보는 공개 자료를 기준으로 정리한 것입니다. 학습 성과를 보장하지 않습니다.</p>`
   + `<div class="fbot"><span>© ${new Date().getFullYear()} ${CFG.brand}. All rights reserved.</span><span>${CFG.brandEn}</span></div></div></footer>`
   + `<div class="fab"><a href="tel:${CFG.telRaw}" class="p" aria-label="전화 상담"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5 19.79 19.79 0 01.22 2.84 2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.94 6.94l1.41-1.41a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></a>`
+  + `<a href="sms:${CFG.telRaw}" aria-label="문자 상담"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></a>`
   + `<a href="/contact" aria-label="상담 신청"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></a></div>`;
 }
 
@@ -694,7 +695,7 @@ ${o.keywords?`<meta name="keywords" content="${esc(o.keywords)}">`:''}
 <style>${CSS}</style>
 ${ld.map(x=>`<script type="application/ld+json">${JSON.stringify(x)}<\/script>`).join('')}
 </head>
-<body>${header()}<main>${o.body}</main>${footer()}<script>(function(){function t(y){try{fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:y,page:location.pathname,ref:document.referrer}),keepalive:true});}catch(e){}}if(location.pathname.indexOf('/api/')!==0)t('view');document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a)return;var h=a.getAttribute('href')||'';if(h.indexOf('tel:')===0)t('tel');else if(h.indexOf('/contact')===0)t('contact');},true);})();<\/script></body></html>`;
+<body>${header()}<main>${o.body}</main>${footer()}<script>(function(){function t(y){try{fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:y,page:location.pathname,ref:document.referrer}),keepalive:true});}catch(e){}}if(location.pathname.indexOf('/api/')!==0)t('view');document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a)return;var h=a.getAttribute('href')||'';if(h.indexOf('tel:')===0)t('tel');else if(h.indexOf('sms:')===0)t('sms');else if(h.indexOf('/contact')===0)t('contact');},true);})();<\/script></body></html>`;
 }
 
 function html(s, st){ return new Response(s, {status:st||200, headers:{'content-type':'text/html;charset=UTF-8','cache-control':'public,max-age=3600','x-robots-tag':'index,follow'}}); }
