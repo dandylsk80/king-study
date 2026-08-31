@@ -1541,6 +1541,28 @@ function rssDate(iso){
   const p2 = n => String(n).padStart(2,'0');
   return `${D}, ${p2(d.getUTCDate())} ${M} ${d.getUTCFullYear()} ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}:${p2(d.getUTCSeconds())} GMT`;
 }
+/* 기존 RSS 를 Atom 으로 변환한다 (피드 항목 로직을 중복 구현하지 않기 위함) */
+function atomFromRss(xml, selfUrl){
+  const one=function(s,t){ const m=s.match(new RegExp("<"+t+"(?:\\s[^>]*)?>([\\s\\S]*?)<\\/"+t+">")); return m?m[1]:""; };
+  const head=xml.split("<item>")[0];
+  const chTitle=one(head,"title"), chLink=one(head,"link"), chDesc=one(head,"description");
+  const items=xml.match(/<item>[\s\S]*?<\/item>/g)||[];
+  const now=new Date().toISOString();
+  let x='<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="ko">';
+  x+="<title>"+chTitle+"</title>";
+  if(chDesc) x+="<subtitle>"+chDesc+"</subtitle>";
+  x+='<link href="'+chLink+'"/><link rel="self" href="'+selfUrl+'"/>';
+  x+="<id>"+(chLink||selfUrl)+"</id><updated>"+now+"</updated>";
+  for(const it of items){
+    const t=one(it,"title"), l=one(it,"link")||one(it,"guid"), d=one(it,"description"), pd=one(it,"pubDate");
+    let up=now; if(pd){ const dt=new Date(pd); if(!isNaN(dt.getTime())) up=dt.toISOString(); }
+    x+="<entry><title>"+t+"</title>";
+    x+='<link href="'+l+'"/><id>'+l+"</id><updated>"+up+"</updated>";
+    if(d) x+="<summary>"+d+"</summary>";
+    x+="</entry>";
+  }
+  return x+"</feed>";
+}
 function rssFeed(){
   build();
   // 수정일이 오늘인 항목(seed%14===0)만 골라 100개가 차면 즉시 중단 — 전수 정렬 없이 처리
@@ -1694,12 +1716,14 @@ export default {
     if (p === '/api/indexnow') return indexnowPing();
     if (p === '/favicon.ico') return faviconIco();
     if (p === '/apple-touch-icon.png' || p === '/apple-touch-icon-precomposed.png') return appleIcon();
+    if(p==="/og.svg") return new Response(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#141210"/><stop offset="1" stop-color="#6B4EFF"/></linearGradient></defs><rect width="1200" height="630" fill="url(#g)"/><rect x="60" y="60" width="1080" height="510" rx="28" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="2"/><text x="600" y="300" text-anchor="middle" font-family="Pretendard,'Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="86" font-weight="800" fill="#ffffff">공부끝판왕</text><text x="600" y="378" text-anchor="middle" font-family="Pretendard,'Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="34" font-weight="500" fill="rgba(255,255,255,.88)">학교별 국·영·수·사·과 과외 정보</text><text x="600" y="530" text-anchor="middle" font-family="Pretendard,'Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="28" font-weight="600" fill="rgba(255,255,255,.72)">king-study.com</text></svg>`,{headers:{"content-type":"image/svg+xml; charset=UTF-8","cache-control":"public, max-age=86400"}});
     if (p === '/icon.svg') return iconSvg();
     if (p === '/site.webmanifest') return manifest();
     const ogm = p.match(/^\/og\/([a-z0-9-]+)\.png$/);
     if (ogm) { const r = ogPng(ogm[1]); return r || notFound(); }
     if (p === '/robots.txt') return robots();
     if (p === '/llms.txt' || p === '/ai.txt') return llmsTxt();
+    if(p==="/atom.xml"||p==="/atom") return new Response(atomFromRss(await (rssFeed()).text(), CFG.origin+"/atom.xml"),{headers:{"content-type":"application/atom+xml; charset=UTF-8","cache-control":"public, max-age=3600"}});
     if (p === '/rss.xml' || p === '/rss') return rssFeed();
     if (p === '/sitemap.xml') return sitemapIndex();
     if (p === '/sitemap-main.xml') return sitemapMain();
