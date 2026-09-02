@@ -380,7 +380,7 @@ header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdro
 .lgm svg{width:100%;height:100%;border-radius:11px}
 .lgt{display:flex;flex-direction:column;line-height:1;gap:5px;align-items:stretch}
 .lgt b{font-size:20px;font-weight:900;letter-spacing:-.045em;display:block}
-.lgt span{font-size:8.5px;color:var(--ink3);font-weight:800;display:flex;justify-content:space-between;letter-spacing:0}
+.lgt span{font-size:10px;color:var(--ink3);font-weight:800;display:flex;justify-content:space-between;letter-spacing:0}
 .lgt span i{font-style:normal}
 .nav{margin-left:auto;display:flex;align-items:center;gap:2px}
 .nav a{padding:9px 13px;font-size:13.5px;font-weight:700;color:var(--ink2);border-radius:999px;transition:all .15s}
