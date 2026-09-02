@@ -1679,7 +1679,7 @@ function rssFeed(){
   for (let i = 0; i < LIST.length && top.length < 100; i++) {
     const r = LIST[i];
     const u = '/school/' + r.slug;
-    if (hash(u) % 14 === 0) {
+    if ((hash(u) + Math.floor(Date.now()/86400000)) % 14 === 0) {
       top.push({ url:u, seed:hash(u),
         title: `${r.full} 과외 — 국어·영어·수학·사회·과학 안내`,
         desc: `${SIDO_FULL[r.se]} ${r.gk} ${r.full} 학생을 위한 과목별 과외 안내와 내신 준비 방법.` });
@@ -1687,7 +1687,7 @@ function rssFeed(){
     for (const k of SUBJ_KEYS) {
       if (top.length >= 100) break;
       const u2 = u + '/' + k;
-      if (hash(u2) % 14 !== 0) continue;
+      if ((hash(u2) + Math.floor(Date.now()/86400000)) % 14 !== 0) continue;
       top.push({ url:u2, seed:hash(u2),
         title: `${r.full} ${SUBJ[k].ko}과외 — ${r.gk} ${GSUF[r.g]} 내신 대비`,
         desc: `${r.full} ${SUBJ[k].ko} 내신 대비 4주 로드맵과 학년별 학습 순서 안내.` });
@@ -1739,6 +1739,13 @@ function smLastmod(key){
   const off = smHash(key) % SM_PERIOD;
   const periods = Math.floor((Date.now()/SM_DAY - off)/SM_PERIOD);
   return new Date((periods*SM_PERIOD + off)*SM_DAY).toISOString().slice(0,10);
+}
+/* RSS 정렬용 날짜: URL 마다 60일 주기로 밀린다. 매일 다른 1/60 묶음이 최신이 되어
+   "최근 항목 위주"를 유지하면서 피드가 날마다 바뀐다. */
+function rssRankDate(u){
+  const off = smHash(u) % 60;
+  const periods = Math.floor((Date.now()/SM_DAY - off)/60);
+  return new Date((periods*60 + off)*SM_DAY);
 }
 /* <loc> 뒤에 lastmod 가 없으면 채워 넣는다 (loc → lastmod → changefreq → priority 순서 유지) */
 function smAddLastmod(xml){
