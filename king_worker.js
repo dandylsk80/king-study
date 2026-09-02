@@ -1237,6 +1237,14 @@ function pageHubSido(se){
     itemList: gl.slice(0,30).map(g=>({name:g.gk, url:`/hub/${se}/${g.ge}`}))});
 }
 
+/* 주변 지역: 같은 시·도의 다른 시·군·구 12개 */
+function nearbyGuSect(se, ge){
+  build();
+  const gl=(SIDX[se]||[]).filter(g=>g.ge!==ge).slice(0,12);
+  if(!gl.length) return '';
+  return `<section class="sec"><div class="wrap"><div class="sh"><span class="no">＋</span><h2>📍 ${SIDO_FULL[se]} 주변 지역</h2></div>
+  <div class="grid4">${gl.map(g=>`<a href="/hub/${se}/${g.ge}"><span>${g.gk}</span><em>${g.n}</em></a>`).join('')}</div></div></section>`;
+}
 function pageHubGugun(se, ge){
   build();
   const rows = GIDX[se+'/'+ge]; if (!rows || !rows.length) return null;
@@ -1262,7 +1270,7 @@ function pageHubGugun(se, ge){
   return shell({title:`${gk} 학교별 과외 — 초·중·고 ${rows.length}개교 | ${CFG.brand}`,
     desc:`${full} ${gk} 소재 초등학교·중학교·고등학교 ${rows.length}곳의 학교별 국어·영어·수학·사회·과학 과외 정보를 정리했습니다.`,
     keywords:`${gk} 과외,${gk} 학교,${gk} 내신과외,${SIDO[se]} ${gk} 과외`,
-    canonical:`/hub/${se}/${ge}`, body, bc, dates:d, file:'region.jpg',
+    canonical:`/hub/${se}/${ge}`, body: body + nearbyGuSect(se, ge), bc, dates:d, file:'region.jpg',
     itemList: rows.slice(0,30).map(r=>({name:r.full, url:'/school/'+r.slug}))});
 }
 
