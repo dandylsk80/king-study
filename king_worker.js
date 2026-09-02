@@ -675,7 +675,7 @@ function footer(){
   + `<div class="fcols">`
   + `<div class="fcol"><h4>Subject</h4>${SUBJ_KEYS.map(k=>`<a href="/subject/${k}">${SUBJ[k].em} ${SUBJ[k].ko}과외</a>`).join('')}</div>`
   + `<div class="fcol"><h4>Region</h4>${SIDO_ORDER.slice(0,6).map(s=>`<a href="/hub/${s}">${SIDO[s]}</a>`).join('')}<a href="/hub">전체 지역</a></div>`
-  + `<div class="fcol"><h4>Info</h4><a href="/all-schools" class="hi">🏫 전체 학교</a><a href="/guide">학습 가이드</a><a href="/contact">상담 신청</a><a href="tel:${CFG.telRaw}">${CFG.tel}</a></div>`
+  + `<div class="fcol"><h4>Info</h4><a href="/all-schools" class="hi">🏫 전체 학교</a><a href="/list">📑 전체 목록</a><a href="/guide">학습 가이드</a><a href="/contact">상담 신청</a><a href="tel:${CFG.telRaw}">${CFG.tel}</a></div>`
   + `</div></div>`
   + `<div class="fall"><b>🏫 전체 학교 보기</b><span>전국 ${LIST.length.toLocaleString()}개 초·중·고를 가나다순으로 모두 확인할 수 있습니다.</span><a href="/all-schools">전체 학교 →</a></div>`
   + `<p class="fno">안내 · 본 사이트는 학습 정보 제공을 목적으로 하며, 게시된 학교 정보는 공개 자료를 기준으로 정리한 것입니다. 학습 성과를 보장하지 않습니다.</p>`
@@ -1171,6 +1171,31 @@ function pageHome(){
 }
 
 /* ══════════════ 페이지 : 링크 허브 ══════════════ */
+function pageList(){
+  build();
+  const bc=[{name:'홈',url:'/'},{name:'전체 목록',url:'/list'}];
+  const nav=NAV.map(x=>`<a href="${x[0]}" class="chip">${x[1]}</a>`).join('');
+  const subj=SUBJ_KEYS.map(k=>`<a href="/subject/${k}" class="chip">${SUBJ[k].em} ${SUBJ[k].ko} 과외</a>`).join('');
+  const gTot=Object.values(SIDX).reduce((a,x)=>a+x.length,0);
+  let secs='';
+  SIDO_ORDER.forEach((se,i)=>{
+    const gl=SIDX[se]||[]; if(!gl.length) return;
+    const n=gl.reduce((a,x)=>a+x.n,0);
+    secs+=`<div class="sh"><span class="no">${String(i+1).padStart(2,'0')}</span><h2><a href="/hub/${se}">${SIDO_FULL[se]}</a></h2></div>`
+      +`<p style="color:#6b7280;font-size:13px;margin:-6px 0 10px">${gl.length}개 시군구 · ${n.toLocaleString()}개교</p>`
+      +`<div class="grid4">${gl.map(g=>`<a href="/hub/${se}/${g.ge}"><span>${g.gk}</span><em>${g.n}</em></a>`).join('')}</div>`;
+  });
+  const body = `<section class="ph"><div class="wrap">${bcNav(bc)}<span class="k">📑 Full Index</span>
+   <h1>전체 목록</h1>
+   <p class="lead">${CFG.brand}의 지역·과목 페이지를 한곳에 모았습니다. 전국 17개 시도 ${gTot}개 시군구, ${LIST.length.toLocaleString()}개 학교로 이어집니다.</p></div></section>
+   <section class="sec"><div class="wrap"><div class="sh"><span class="no">00</span><h2>주요 페이지</h2></div>
+   <div style="display:flex;flex-wrap:wrap;gap:8px">${nav}${subj}</div></div></section>
+   <section class="sec"><div class="wrap">${secs}</div></section>`
+   + `<script type="application/ld+json">${JSON.stringify({"@context":"https://schema.org","@type":"CollectionPage","name":"전체 목록","url":CFG.origin+"/list","isPartOf":{"@type":"WebSite","name":CFG.brand,"url":CFG.origin}})}<\/script>`;
+  return shell({title:`전체 목록 — 지역·과목 색인 | ${CFG.brand}`,
+    desc:`${CFG.brand}의 전국 17개 시도 ${gTot}개 시군구와 5과목 페이지를 모은 전체 목록.`,
+    canonical:'/list', body, bc, file:'region.jpg'});
+}
 function pageHub(){
   build();
   const d = dates(hash('/hub'));
@@ -1559,7 +1584,7 @@ Disallow: /
 # llms.txt: ${CFG.origin}/llms.txt
 Llms-txt: ${CFG.origin}/llms.txt
 
-Sitemap: ${CFG.origin}/sitemap.xml
+# 전체 목록: ${CFG.origin}/list\nSitemap: ${CFG.origin}/sitemap.xml
 Sitemap: ${CFG.origin}/sitemap-naver.xml
 Sitemap: ${CFG.origin}/rss.xml
 
@@ -1689,7 +1714,7 @@ function allUrls(){
 }
 function staticUrls(){
   build();
-  const u = ['/','/hub','/subject','/guide','/contact','/all-schools']
+  const u = ['/','/list','/hub','/subject','/guide','/contact','/all-schools']
     .concat(SUBJ_KEYS.map(k=>'/subject/'+k))
     .concat(SIDO_ORDER.map(s=>'/hub/'+s));
   for (const se of SIDO_ORDER) for (const g of (SIDX[se]||[])) u.push(`/hub/${se}/${g.ge}`);
@@ -1808,6 +1833,7 @@ export default {
     if (smm) { const r = sitemapChunk(parseInt(smm[1],10)); return r || notFound(); }
 
     if (p === '/') return html(pageHome());
+    if (p === '/list') return html(pageList());
     if (p === '/hub') return html(pageHub());
     if (p === '/subject') return html(pageSubjIndex());
     if (p === '/guide') return html(pageGuide());
