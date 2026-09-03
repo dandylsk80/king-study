@@ -297,12 +297,23 @@ async function tgNotify(env, type, page, ref, ua) {
   L.push('유입: ' + tgRef(ref));
   L.push('기기: ' + (/Mobile|Android|iPhone|iPad/i.test(ua || '') ? '모바일' : 'PC'));
   L.push('시각: ' + tgTime() + ' (KST)');
-  try {
-    await fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: TG_CHAT, text: L.join('\n'), disable_web_page_preview: true })
-    });
-  } catch (e) { }
+  {
+    /* 텔레그램 API 가 429/5xx 를 주는 경우가 있어 최대 3회 재시도한다.
+       실패는 조용히 삼키지 않고 로그로 남겨 wrangler tail 에서 확인할 수 있게 한다. */
+    const __body = JSON.stringify({ chat_id: TG_CHAT, text: L.join('\n'), disable_web_page_preview: true });
+    for (let __i = 0; __i < 3; __i++) {
+      let __st = 0;
+      try {
+        const __r = await fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: __body
+        });
+        if (__r && __r.ok) return;
+        __st = __r ? __r.status : 0;
+      } catch (e) { __st = -1; }
+      console.log('tgNotify 실패 type=' + type + ' status=' + __st + ' try=' + (__i + 1));
+      if (__i < 2) await new Promise(function (s) { setTimeout(s, 400 * (__i + 1)); });
+    }
+  }
 }
 
 function build(){
@@ -771,7 +782,7 @@ ${o.keywords?`<meta name="keywords" content="${esc(o.keywords)}">`:''}
 <style>${CSS}</style>
 ${ld.map(x=>`<script type="application/ld+json">${JSON.stringify(x)}<\/script>`).join('')}
 </head>
-<body>${header()}<main>${o.body}</main>${footer()}<script>(function(){function t(y){try{fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:y,page:location.pathname,ref:document.referrer}),keepalive:true});}catch(e){}}if(location.pathname.indexOf('/api/')!==0)t('view');document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a)return;var h=a.getAttribute('href')||'';if(h.indexOf('tel:')===0)t('tel');else if(h.indexOf('sms:')===0)t('sms');else if(h.indexOf('/contact')===0)t('contact');},true);})();<\/script></body></html>`;
+<body>${header()}<main>${o.body}</main>${footer()}<script>(function(){var U='/api/track',S={};function t(ty){try{var d=JSON.stringify({type:ty,page:location.pathname,ref:document.referrer}),ok=false;if(navigator.sendBeacon){try{ok=navigator.sendBeacon(U,new Blob([d],{type:'application/json'}));}catch(e){}}if(!ok){try{fetch(U,{method:'POST',headers:{'Content-Type':'application/json'},body:d,keepalive:true}).catch(function(){});}catch(e){}}}catch(e){}}function c(ty){if(S[ty])return;S[ty]=1;setTimeout(function(){S[ty]=0;},1500);t(ty);}function h(e,early){var a=e.target&&e.target.closest&&e.target.closest('a,button');if(!a)return;var v=(a.getAttribute&&a.getAttribute('href'))||'';if(v.indexOf('tel:')===0)c('tel');else if(v.indexOf('sms:')===0)c('sms');else if(!early&&(v.indexOf('/contact')===0))c('contact');}document.addEventListener('pointerdown',function(e){h(e,1);},true);document.addEventListener('click',function(e){h(e,0);},true);if(location.pathname.indexOf('/api/')!==0)t('view');})();<\/script></body></html>`;
 }
 
 function html(s, st){ return new Response(s, {status:st||200, headers:{'content-type':'text/html;charset=UTF-8','cache-control':'public,max-age=3600','x-robots-tag':'index,follow'}}); }
