@@ -1584,6 +1584,7 @@ Allow: /
 # AI 검색 / 생성형 엔진 (노출 허용)
 User-agent: GPTBot
 Allow: /
+Crawl-delay: 10
 User-agent: OAI-SearchBot
 Allow: /
 User-agent: ChatGPT-User
@@ -1621,6 +1622,22 @@ Disallow: /
 User-agent: AhrefsBot
 Disallow: /
 User-agent: MJ12bot
+Disallow: /
+User-agent: AhrefsSiteAudit
+Disallow: /
+User-agent: DotBot
+Disallow: /
+User-agent: DataForSeoBot
+Disallow: /
+User-agent: BLEXBot
+Disallow: /
+User-agent: rogerbot
+Disallow: /
+User-agent: SEOkicks
+Disallow: /
+User-agent: Barkrowler
+Disallow: /
+User-agent: serpstatbot
 Disallow: /
 
 # llms.txt: ${CFG.origin}/llms.txt
