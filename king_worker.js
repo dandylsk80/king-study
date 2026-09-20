@@ -703,6 +703,8 @@ footer{background:var(--bg2);border-top:1px solid var(--line);padding:48px 0 28p
 
 /* float */
 .fab{position:fixed;right:20px;bottom:20px;z-index:70;display:flex;flex-direction:column;gap:10px}
+/* 모바일: 하단 우측은 브라우저 툴바·홈 인디케이터·스크롤 동선과 겹쳐 오터치가 난다 → 화면 세로 중앙 우측으로 */
+@media(max-width:768px){.fab{top:50%;bottom:auto;transform:translateY(-50%);gap:12px}}
 .fab a{width:52px;height:52px;border-radius:50%;background:#fff;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;transition:all .18s;box-shadow:var(--sh);color:var(--ink2)}
 .fab a:hover{color:var(--vio);border-color:var(--vio)}
 .fab a.p{background:var(--vio);color:#fff;border-color:var(--vio);box-shadow:var(--sh2)}
