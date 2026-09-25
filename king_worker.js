@@ -880,7 +880,7 @@ ${ld.map(x=>`<script type="application/ld+json">${JSON.stringify(x)}<\/script>`)
 function html(s, st){ return new Response(s, {status:st||200, headers:{'content-type':'text/html;charset=UTF-8','cache-control':'public,max-age=3600','x-robots-tag':'index,follow'}}); }
 
 /* ══════════════ 공통 조각 ══════════════ */
-function ctaBlock(t, seed){
+function ctaBlock(t, seed, label){
   const s = (seed!=null) ? seed : (t ? hash(String(t)) : 7);
   const T = t ? esc(t) : '';
   const h = T ? pick([`${T} 학습 상담을 신청하세요`,`${T} 학습 방향을 정리해 드립니다`,`${T} 기준으로 과목 순서를 잡아 드립니다`], s)
@@ -891,8 +891,9 @@ function ctaBlock(t, seed){
               : pick(['다니는 학교와 학년, 현재 점수를 알려주시면 지금 필요한 과목 순서를 정리해 회신드립니다.',
                       '학교명과 학년만 남겨 주시면, 그 학교 기준으로 준비해야 할 과목을 짚어 드립니다.',
                       '내신 범위와 고민되는 과목을 남겨 주시면 학습 방향을 정리해 드립니다.'], s);
+  const ctaAlt = T ? `${T} 과외 상담 안내` : `${esc(label || CFG.slogan)} 상담 안내`;
   return `<section class="ctaw"><div class="cta">`
-  + (CFG.img ? `<img class="cta-bg" src="${CFG.img}111.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : '')
+  + (CFG.img ? `<img class="cta-bg" src="${CFG.img}111.jpg" alt="${ctaAlt}" loading="lazy" decoding="async" onerror="this.remove()">` : '')
   + `<div class="cta-in"><span class="k">💬 Consulting</span><h2>${h}</h2><p>${p}</p>`
   + `<div class="cta-b"><a href="/contact" class="btn btn-f">상담 신청하기</a><a href="tel:${CFG.telRaw}" class="btn">📞 ${CFG.tel}</a></div></div></div></section>`;
 }
@@ -1261,7 +1262,7 @@ function pageHome(){
    <h3>📐 정리 기준</h3><p>초등 ${LIST.filter(r=>r.g==='E').length.toLocaleString()}개교, 중학 ${LIST.filter(r=>r.g==='M').length.toLocaleString()}개교, 고교 ${LIST.filter(r=>r.g==='H').length.toLocaleString()}개교를 시도·시군구 단위로 구분했습니다.</p>
    <h3>📖 과목 구성</h3><p>국어·영어·수학·사회·과학 다섯 과목만 다룹니다. 범위를 좁힌 대신 각 과목에서 학년별로 무엇이 달라지는지 자세히 적었습니다.</p>
    <h3>🔍 이용 방법</h3><p>지역에서 학교를 찾거나 전체 학교 목록에서 검색하고, 상담 신청으로 학교명과 학년을 남겨 주시면 필요한 과목 순서를 정리해 드립니다.</p>
-   </div></div></div></section>` + ctaBlock('', 3);
+   </div></div></div></section>` + ctaBlock('', 3, '학교별 국·영·수·사·과 과외');
 
   return shell({
     title:`${CFG.brand} — 학교별 국어·영어·수학·사회·과학 과외`,
@@ -1311,7 +1312,7 @@ function pageHub(){
    <section class="sec"><div class="wrap"><div class="idx">${
      SIDO_ORDER.map((s,i)=>{const gl=SIDX[s]||[]; const n=gl.reduce((a,x)=>a+x.n,0);
        return `<a href="/hub/${s}"><span class="n">${String(i+1).padStart(2,'0')}</span><span class="t">${SIDO_FULL[s]}</span><span class="d">${gl.length}개 시군구 · ${n.toLocaleString()}개교</span><span class="ar">→</span></a>`;}).join('')}</div>
-   <div style="margin-top:22px"><a href="/all-schools" class="chip">🏫 전체 학교 가나다순 보기 →</a></div></div></section>` + ctaBlock('', 5);
+   <div style="margin-top:22px"><a href="/all-schools" class="chip">🏫 전체 학교 가나다순 보기 →</a></div></div></section>` + ctaBlock('', 5, '지역별 학교 찾기');
   return shell({title:`지역별 학교 찾기 — 17개 시도 ${LIST.length.toLocaleString()}개교 | ${CFG.brand}`,
     desc:`전국 17개 시도 ${LIST.length.toLocaleString()}개 초·중·고 목록. 시도와 시군구를 선택해 학교별 국어·영어·수학·사회·과학 과외 정보를 확인하세요.`,
     canonical:'/hub', body, bc, dates:d, file:'region.jpg',
@@ -1406,7 +1407,7 @@ function pageAllSchools(page){
    <div class="grid3">${slice.map(r=>`<a href="/school/${r.slug}"><div class="gt">${GEMO[r.g]} ${r.full}</div><div class="gd">${SIDO[r.se]} ${r.gk}</div></a>`).join('')}</div>
    ${pager()}</div></section>
    <section class="sec"><div class="wrap"><div class="sh"><span class="no">99</span><h2>📍 지역으로 찾기</h2></div>
-   <div class="grid4">${SIDO_ORDER.map(s=>{const n=(SIDX[s]||[]).reduce((a,x)=>a+x.n,0);return `<a href="/hub/${s}"><span>${SIDO[s]}</span><em>${n.toLocaleString()}</em></a>`;}).join('')}</div></div></section>` + ctaBlock('', 11);
+   <div class="grid4">${SIDO_ORDER.map(s=>{const n=(SIDX[s]||[]).reduce((a,x)=>a+x.n,0);return `<a href="/hub/${s}"><span>${SIDO[s]}</span><em>${n.toLocaleString()}</em></a>`;}).join('')}</div></div></section>` + ctaBlock('', 11, '전국 전체 학교 목록');
   return shell({
     title: p===1 ? `전국 전체 학교 목록 — 초·중·고 ${sorted().length.toLocaleString()}개교 | ${CFG.brand}` : `전국 전체 학교 목록 ${p}페이지 — ${CFG.brand}`,
     desc:`전국 초·중·고 ${sorted().length.toLocaleString()}개교 전체 목록(가나다순, ${p}/${totalPages}페이지). 학교명을 선택하면 국어·영어·수학·사회·과학 과외 안내로 이동합니다.`,
@@ -1422,7 +1423,7 @@ function pageSubjIndex(){
   const body = thumb({seed:hash('/subject'), file:'subject-index.jpg', kicker:'SUBJECTS', title:'과목별 안내 — 국·영·수·사·과', sub:'다섯 과목의 학년별 학습 방향과 내신 대비'})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}<span class="k">📚 Subjects</span>
   <h1>과목별 안내</h1><p class="lead">국어·영어·수학·사회·과학 다섯 과목만 다룹니다. 과목마다 학년이 올라가며 무엇이 달라지는지, 어디서 성적이 갈리는지를 정리했습니다.</p>${dateLine(d)}</div></section>
-  <section class="sec"><div class="wrap"><div class="idx">${SUBJ_KEYS.map(k=>`<a href="/subject/${k}"><span class="n">${SUBJ[k].no}</span><span class="em">${SUBJ[k].em}</span><span class="t">${SUBJ[k].ko}과외</span><span class="d">${SUBJ[k].pt}</span><span class="ar">→</span></a>`).join('')}</div></div></section>` + ctaBlock('', 13);
+  <section class="sec"><div class="wrap"><div class="idx">${SUBJ_KEYS.map(k=>`<a href="/subject/${k}"><span class="n">${SUBJ[k].no}</span><span class="em">${SUBJ[k].em}</span><span class="t">${SUBJ[k].ko}과외</span><span class="d">${SUBJ[k].pt}</span><span class="ar">→</span></a>`).join('')}</div></div></section>` + ctaBlock('', 13, '과목별 국·영·수·사·과 안내');
   return shell({title:`과목별 안내 — 국어·영어·수학·사회·과학 | ${CFG.brand}`, desc:'국어·영어·수학·사회·과학 다섯 과목의 학년별 학습 방향과 내신 대비 방법을 정리했습니다.', canonical:'/subject', body, bc, dates:d, file:'subject-index.jpg', itemList:SUBJ_KEYS.map(k=>({name:SUBJ[k].ko+'과외',url:'/subject/'+k}))});
 }
 function pageSubjDetail(sk){
@@ -1481,7 +1482,7 @@ function pageGuide(){
   <div class="abox"><div class="ttl">💡 한눈에 보기 · 시험 준비 순서</div><p><strong>4주 전 범위 확정 → 3주 전 개념 정리 → 2주 전 문제 적용 → 1주 전 실전 점검</strong> 순서로 진행합니다. 시험 직후에는 점수보다 틀린 단원을 먼저 확인해 다음 주기로 연결합니다.</p></div></div></section>
   <section class="sec"><div class="wrap"><div class="sh"><span class="no">01</span><h2>🗓 시험 준비 타임라인</h2></div>
   <div class="tl">${items.map(x=>`<div class="tli"><div class="tlt"><span class="bg ${x[3]}">${x[0]} ${x[1]}</span></div><div class="tld">${x[2]}</div></div>`).join('')}</div></div></section>
-  <section class="sec"><div class="wrap"><div class="sh"><span class="no">02</span><h2>❓ 자주 묻는 질문</h2></div>${faqBlock(faq)}</div></section>` + ctaBlock('', 17);
+  <section class="sec"><div class="wrap"><div class="sh"><span class="no">02</span><h2>❓ 자주 묻는 질문</h2></div>${faqBlock(faq)}</div></section>` + ctaBlock('', 17, '학습 가이드');
   return shell({title:`학습 가이드 — 시험 준비 4주 타임라인 | ${CFG.brand}`, desc:'시험 4주 전부터 직후까지, 학교 시험을 기준으로 한 과목 공통 학습 준비 일정을 정리했습니다.', keywords:'시험 준비,내신 계획,오답노트,학습 계획,공부법', canonical:'/guide', body, bc, faq, dates:d, file:'guide.jpg'});
 }
 
