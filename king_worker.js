@@ -1423,7 +1423,7 @@ function pageSubjIndex(){
   const body = thumb({seed:hash('/subject'), file:'subject-index.jpg', kicker:'SUBJECTS', title:'과목별 안내 — 국·영·수·사·과', sub:'다섯 과목의 학년별 학습 방향과 내신 대비'})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}<span class="k">📚 Subjects</span>
   <h1>과목별 안내</h1><p class="lead">국어·영어·수학·사회·과학 다섯 과목만 다룹니다. 과목마다 학년이 올라가며 무엇이 달라지는지, 어디서 성적이 갈리는지를 정리했습니다.</p>${dateLine(d)}</div></section>
-  <section class="sec"><div class="wrap"><div class="idx">${SUBJ_KEYS.map(k=>`<a href="/subject/${k}"><span class="n">${SUBJ[k].no}</span><span class="em">${SUBJ[k].em}</span><span class="t">${SUBJ[k].ko}과외</span><span class="d">${SUBJ[k].pt}</span><span class="ar">→</span></a>`).join('')}</div></div></section>` + ctaBlock('', 13, '과목별 국·영·수·사·과 안내');
+  <section class="sec"><div class="wrap"><div class="idx">${SUBJ_KEYS.map(k=>`<a href="/subject/${k}"><span class="n">${SUBJ[k].no}</span><span class="em">${SUBJ[k].em}</span><span class="t">${SUBJ[k].ko}과외</span><span class="d">${SUBJ[k].pt}</span><span class="ar">→</span></a>`).join('')}</div></div></section>` + ctaBlock('', 13, '과목별 국·영·수·사·과');
   return shell({title:`과목별 안내 — 국어·영어·수학·사회·과학 | ${CFG.brand}`, desc:'국어·영어·수학·사회·과학 다섯 과목의 학년별 학습 방향과 내신 대비 방법을 정리했습니다.', canonical:'/subject', body, bc, dates:d, file:'subject-index.jpg', itemList:SUBJ_KEYS.map(k=>({name:SUBJ[k].ko+'과외',url:'/subject/'+k}))});
 }
 function pageSubjDetail(sk){
