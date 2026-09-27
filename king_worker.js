@@ -1988,11 +1988,11 @@ function xmlBody(urls, withPosts){
 }
 
 /* ── 사이트맵 캐싱 ──────────────────────────────────────────
-   샤드 하나가 URL 20,000건·3.2MB 라 만들 때마다 200ms 넘게 든다.
+   샤드 하나가 URL 20,000건·3.2MB 라 만들 때마다 200ms 넘게 든다. 엣지 캐시는 1시간.
    ① 날짜 단위로 isolate 메모리에 본문을 남기고
    ② Cache API 로 엣지에 올려 다음 요청은 워커 실행 자체를 건너뛴다.
    lastmod 는 smLastmod 가 날짜 단위로만 바뀌므로 하루 캐시해도 어긋나지 않는다. */
-const SM_CACHE_SEC = 21600;
+const SM_CACHE_SEC = 3600;
 let smCacheDay = -1, smCacheBody = null;
 function smCached(key, make){
   const day = Math.floor(Date.now()/SM_DAY);
@@ -2009,12 +2009,15 @@ async function smResp(request, ctx, key, make, ver){
   if (useCache) { const hit = await cache.match(ckey); if (hit) return hit; }
   const body = smCached(key + (ver ? ':' + ver : ''), make);
   if (body == null) return null;
-  const res = new Response(body, {headers:{
+  const hdr = {
     'content-type':'application/xml;charset=UTF-8',
     'cache-control':'public,max-age=' + SM_CACHE_SEC
-  }});
-  if (useCache && ctx && ctx.waitUntil) ctx.waitUntil(cache.put(ckey, res.clone()));
-  return res;
+  };
+  /* res.clone() 은 본문 스트림을 tee 로 가르는데, 두 갈래가 느린 쪽(cache.put) 속도에
+     묶여 3.3MB 샤드 전송이 60~120초까지 늘었다 — Yeti 가 504 를 받은 원인.
+     본문은 이미 완성된 문자열이므로 응답을 두 개 따로 만들어 tee 를 없앤다. */
+  if (useCache && ctx && ctx.waitUntil) ctx.waitUntil(cache.put(ckey, new Response(body, {headers:hdr})));
+  return new Response(body, {headers:hdr});
 }
 function sitemapIndexBody(){
   const n = Math.ceil(allUrls().length / SM_CHUNK);
