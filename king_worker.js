@@ -1056,7 +1056,7 @@ function pageSubject(slug, sk){
     `${T} ${S}의 핵심은 <strong>${SUBJ[sk].pt}</strong>입니다. ${T} ${S} 시험은 수업에서 다룬 내용을 변형해 출제되므로, ${T} 수업 필기를 기준으로 범위를 좁히는 것이 가장 빠릅니다.`
   ], seed);
 
-  const title = `${T} ${S}과외 — ${r.gk} ${GSUF[r.g]} 내신 대비`;
+  const title = `${T} ${S}과외 — ${r.gk} ${GSUF[r.g]} 내신 대비 | ${CFG.brand}`;
   const body = thumb({seed:hash(canonical), file:`subject-${sk}.jpg`, kicker:`${SIDO[r.se]} · ${r.gk} · ${SUBJ[sk].tag}`, title:`${T} ${S}과외`, sub:`${SIDO_FULL[r.se]} ${r.gk} · ${GSUF[r.g]} ${GYEAR[r.g]} · ${S} 내신 대비 가이드`})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}
      <span class="k">${E} ${SUBJ[sk].tag}</span>
@@ -1128,7 +1128,7 @@ function pageSchool(slug){
     {q:`${T} 과외 상담은 어떻게 신청하나요?`, a:`이 페이지의 상담 신청에서 ${T} 학년과 현재 성적, 고민되는 과목을 남겨 주시면 됩니다. ${T} 최근 시험 범위와 틀린 단원을 함께 적어 주시면 ${T} 기준으로 더 정확한 순서를 안내드릴 수 있습니다.`}
   ];
 
-  const title = `${T} 과외 — 국어·영어·수학·사회·과학 안내`;
+  const title = `${T} 과외 — 국어·영어·수학·사회·과학 안내 | ${CFG.brand}`;
   const body = thumb({seed:hash('/school/'+slug), file:`school-${GEN[r.g]}.jpg`, kicker:`${SIDO[r.se]} · ${r.gk}`, title:`${T} 과외`, sub:`${SIDO_FULL[r.se]} ${r.gk} · ${GSUF[r.g]} ${GYEAR[r.g]} · 5과목 학습 안내`})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}
      <span class="k">${GEMO[r.g]} ${SIDO[r.se]} · ${r.gk}</span>
@@ -1266,7 +1266,7 @@ function pageHome(){
    </div></div></div></section>` + ctaBlock('', 3, '학교별 국·영·수·사·과 과외');
 
   return shell({
-    title:`${CFG.brand} — 학교별 국어·영어·수학·사회·과학 과외`,
+    title:`학교별 국어·영어·수학·사회·과학 과외 | ${CFG.brand}`,
     desc:`전국 ${LIST.length.toLocaleString()}개 초·중·고 학교별 국어·영어·수학·사회·과학 과외 정보. 학교를 선택하면 내신 4주 로드맵과 과목별 학습 방향을 확인할 수 있습니다.`,
     keywords:'학교별 과외,국어과외,영어과외,수학과외,사회과외,과학과외,내신과외,초등과외,중등과외,고등과외',
     canonical:'/', body, dates:d, file:'og-default.jpg',
@@ -1410,7 +1410,7 @@ function pageAllSchools(page){
    <section class="sec"><div class="wrap"><div class="sh"><span class="no">99</span><h2>📍 지역으로 찾기</h2></div>
    <div class="grid4">${SIDO_ORDER.map(s=>{const n=(SIDX[s]||[]).reduce((a,x)=>a+x.n,0);return `<a href="/hub/${s}"><span>${SIDO[s]}</span><em>${n.toLocaleString()}</em></a>`;}).join('')}</div></div></section>` + ctaBlock('', 11, '전국 전체 학교 목록');
   return shell({
-    title: p===1 ? `전국 전체 학교 목록 — 초·중·고 ${sorted().length.toLocaleString()}개교 | ${CFG.brand}` : `전국 전체 학교 목록 ${p}페이지 — ${CFG.brand}`,
+    title: p===1 ? `전국 전체 학교 목록 — 초·중·고 ${sorted().length.toLocaleString()}개교 | ${CFG.brand}` : `전국 전체 학교 목록 ${p}페이지 | ${CFG.brand}`,
     desc:`전국 초·중·고 ${sorted().length.toLocaleString()}개교 전체 목록(가나다순, ${p}/${totalPages}페이지). 학교명을 선택하면 국어·영어·수학·사회·과학 과외 안내로 이동합니다.`,
     keywords:'전체 학교,전국 학교 목록,초등학교 목록,중학교 목록,고등학교 목록,학교별 과외',
     canonical, body, bc, dates:d, file:'all-schools.jpg',
@@ -1545,7 +1545,7 @@ function pageContact(){
     .catch(function(){res.style.color='#8C3A2B';res.textContent='전송에 실패했습니다. 전화로 연락 주시면 빠르게 도와드리겠습니다.';btn.disabled=false;btn.textContent='다시 시도하기';});
   }
   <\/script>`;
-  return shell({title:`상담 신청 — ${CFG.brand}`, desc:`학생 이름과 주소, 학년, 희망 과목을 남기시면 확인 후 연락드립니다. 전화 상담 ${CFG.tel}.`, canonical:'/contact', body, bc, dates:d, file:'contact.jpg'});
+  return shell({title:`상담 신청 | ${CFG.brand}`, desc:`학생 이름과 주소, 학년, 희망 과목을 남기시면 확인 후 연락드립니다. 전화 상담 ${CFG.tel}.`, canonical:'/contact', body, bc, dates:d, file:'contact.jpg'});
 }
 
 /* ══════════════ 파비콘 / 매니페스트 ══════════════ */
@@ -1889,7 +1889,7 @@ function pagePostList(posts) {
 <p class="lead">학교 공부와 과외를 이어 가는 데 도움이 되는 글을 한 편씩 올립니다. 내신 대비 순서, 복습 방법, 과목별 약점 잡는 법을 다룹니다.</p>
 ${postCards(posts)}
 </div></section>`;
-  return shell({ title: `학습 정보 — ${CFG.brand}`,
+  return shell({ title: `학습 정보 | ${CFG.brand}`,
     desc: `학교 공부와 과외를 이어 가는 데 필요한 정보를 정리했습니다. 내신 대비 순서, 복습 방법, 과목별 약점 잡는 법까지 ${CFG.brand}이 한 편씩 올리는 학습 안내입니다.`,
     canonical: '/post', body });
 }
@@ -1900,7 +1900,7 @@ function pagePost(p) {
 ${postArticle(p)}
 <p style="margin-top:26px"><a href="/post">학습 정보 전체</a> · <a href="/list">전체 목록</a> · <a href="/all-schools">전체 학교</a></p>
 </div></section>`;
-  return shell({ title: `${p.title} — ${CFG.brand}`, desc: (p.summary || p.title), canonical: '/post/' + p.slug, body });
+  return shell({ title: `${p.title} | ${CFG.brand}`, desc: (p.summary || p.title), canonical: '/post/' + p.slug, body });
 }
 
 function rssFeed(){
@@ -2040,7 +2040,7 @@ function notFound(){
   const body=`<section class="ph"><div class="wrap"><span class="k">404</span><h1>요청하신 페이지를 찾을 수 없습니다</h1>
   <p class="lead">주소가 변경되었거나 삭제된 페이지입니다. 아래에서 학교를 다시 찾아보세요.</p>
   <div class="hero-b" style="margin-top:26px"><a href="/all-schools" class="btn btn-f">🏫 전체 학교</a><a href="/hub" class="btn btn-o">📍 지역별 찾기</a></div></div></section>`;
-  return html(shell({title:`페이지를 찾을 수 없습니다 — ${CFG.brand}`, desc:'요청하신 페이지를 찾을 수 없습니다.', canonical:'/404', body, article:false}), 404);
+  return html(shell({title:`페이지를 찾을 수 없습니다 | ${CFG.brand}`, desc:'요청하신 페이지를 찾을 수 없습니다.', canonical:'/404', body, article:false}), 404);
 }
 
 /* ══════════════ 라우터 ══════════════ */
