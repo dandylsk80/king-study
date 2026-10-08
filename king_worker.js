@@ -1727,44 +1727,98 @@ Sitemap: ${CFG.origin}/rss.xml
 /* ══════════════ IndexNow (네이버 + Bing 즉시 색인 요청) ══════════════ */
 const INDEXNOW_KEY = '75a5ac2bb2094bf9aa566c75b4c03b91';
 
-/* 제출 대상 URL 목록
-   고정 페이지 전체 + 학교 페이지를 시간별 구간으로 나눠 순환 제출
-   (1회 한도 10,000건 / 1,500개교 × 6페이지 = 9,000건씩 → 9시간이면 전체 1바퀴) */
-const IN_CHUNK = 1500;
-function indexnowUrls(){
-  build();
-  const out = staticUrls().slice();
-  const chunks = Math.ceil(LIST.length / IN_CHUNK);
-  const hour = Math.floor(Date.now() / 3600000);
-  const from = (hour % chunks) * IN_CHUNK;
-  const slice = LIST.slice(from, from + IN_CHUNK);
-  for (const r of slice) {
-    const u = '/school/' + r.slug;
-    out.push(u);
-    for (const k of SUBJ_KEYS) out.push(u + '/' + k);
-  }
-  return out.map(u => CFG.origin + u);
+/* ── IndexNow: 새 페이지·바뀐 페이지만 (2026-10-08) ─────────────────────
+   매시 1,500교×6 회전(일 22만 URL)은 중단. 하루 1회(cron 03:25 UTC = 12:25 KST):
+   ① 7일 내 새 글(+/post)
+   ② 페이지 유형별 지문 — 대표 페이지 HTML 에서 날짜를 뗀 해시 — 가 D1 site_state 에
+      저장된 값과 다르면 그 유형의 URL 전부(배포로 템플릿·데이터가 바뀐 경우).
+   바뀐 게 없으면 보내지 않고 indexnow_log 에 count 0 'no-change' 한 줄만 남긴다.
+   저장된 지문이 없으면(첫 실행) 전 유형을 한 번 보낸다. D1 읽기 실패면 새 글만.
+   수동: GET /api/indexnow?key=<KEY>[&dry=1]  (dry 는 보낼 목록만 계산, 제출·저장 없음) */
+const IN_TYPES = {
+  home:       { sample: () => pageHome(),                   urls: () => ['/'] },
+  list:       { sample: () => pageList(),                   urls: () => ['/list'] },
+  hub:        { sample: () => pageHub(),                    urls: () => ['/hub'] },
+  hubSido:    { sample: () => pageHubSido(SIDO_ORDER[0]),   urls: () => SIDO_ORDER.map(s => '/hub/' + s) },
+  hubGugun:   { sample: () => { const g = (SIDX[SIDO_ORDER[0]] || [])[0]; return g ? pageHubGugun(SIDO_ORDER[0], g.ge) : ''; },
+                urls: () => { const u = []; for (const se of SIDO_ORDER) for (const g of (SIDX[se] || [])) u.push('/hub/' + se + '/' + g.ge); return u; } },
+  school:     { sample: () => pageSchool(LIST[0].slug),     urls: () => LIST.map(r => '/school/' + r.slug) },
+  subject:    { sample: () => pageSubject(LIST[0].slug, SUBJ_KEYS[0]),
+                urls: () => { const u = []; for (const r of LIST) for (const k of SUBJ_KEYS) u.push('/school/' + r.slug + '/' + k); return u; } },
+  subjIdx:    { sample: () => pageSubjIndex(),              urls: () => ['/subject'] },
+  subjDet:    { sample: () => pageSubjDetail(SUBJ_KEYS[0]), urls: () => SUBJ_KEYS.map(k => '/subject/' + k) },
+  allSchools: { sample: () => pageAllSchools(1),
+                urls: () => { const tp = Math.ceil(sorted().length / PER); const u = ['/all-schools']; for (let i = 2; i <= tp; i++) u.push('/all-schools/' + i); return u; } },
+  guide:      { sample: () => pageGuide(),                  urls: () => ['/guide'] },
+  contact:    { sample: () => pageContact(),                urls: () => ['/contact'] }
+};
+/* 날짜(ISO·한국식)만 떼고 해시 — dates() 가 매일 미는 dateModified 때문에 지문이 흔들리지 않게 */
+function inFingerprint(html){
+  const t = String(html || '')
+    .replace(/\d{4}-\d{2}-\d{2}(T[0-9:.]+Z?)?/g, 'D')
+    .replace(/\d{4}\s*[.년]\s*\d{1,2}\s*[.월]\s*\d{1,2}\s*일?/g, 'D');
+  let h1 = 5381, h2 = 0x811c9dc5;
+  for (let i = 0; i < t.length; i++) { const c = t.charCodeAt(i); h1 = ((h1 << 5) + h1 + c) >>> 0; h2 = Math.imul(h2 ^ c, 16777619) >>> 0; }
+  return h1.toString(16) + h2.toString(16) + '-' + t.length;
 }
-
-async function indexnowPing(){
-  /* 최근 7일 안에 발행된 글은 배치 앞에 실어 색인을 앞당긴다 */
-  const urlList = postFreshUrls().concat(indexnowUrls());
-  const payload = {
-    host: CFG.origin.replace(/^https?:\/\//, ''),
-    key: INDEXNOW_KEY,
-    keyLocation: CFG.origin + '/' + INDEXNOW_KEY + '.txt',
-    urlList: urlList
-  };
-  const opt = {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json; charset=utf-8'},
-    body: JSON.stringify(payload)
-  };
-  let naver = 0, bing = 0;
-  try { naver = (await fetch('https://searchadvisor.naver.com/indexnow', opt)).status; } catch (e) { naver = -1; }
-  try { bing  = (await indexnowFetch(opt)).status; } catch (e) { bing = -1; }
-  return new Response(JSON.stringify({ ok:true, urlCount: urlList.length, naver, bing }),
-    {headers:{'content-type':'application/json'}});
+function logIndexnow(env, row){
+  try {
+    if (!env || !env.DB) return Promise.resolve();
+    return env.DB.prepare('INSERT INTO indexnow_log (site,ts,source,start_idx,count,status,endpoint,attempt,note) VALUES (?,?,?,?,?,?,?,?,?)')
+      .bind('king-study', new Date().toISOString(), row.source || '', row.start | 0, row.count | 0,
+            row.status | 0, String(row.ep || '').slice(0, 80), 1, String(row.note || '').slice(0, 200))
+      .run().catch(() => {});
+  } catch (e) { return Promise.resolve(); }
+}
+/* 한 묶음(최대 10,000) 씩 네이버 + 폴백 체인(api.indexnow.org → yandex → seznam)에 보내고 D1 에 남긴다 */
+async function inSubmit(env, urls, source, note){
+  const out = []; let ok = true;
+  for (let i = 0; i < urls.length; i += 10000) {
+    const batch = urls.slice(i, i + 10000);
+    const opt = { method: 'POST', headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ host: CFG.origin.replace(/^https?:\/\//, ''), key: INDEXNOW_KEY, keyLocation: CFG.origin + '/' + INDEXNOW_KEY + '.txt', urlList: batch }) };
+    let naver = 0, chain = { status: 0, url: '' };
+    try { naver = (await fetch('https://searchadvisor.naver.com/indexnow', opt)).status; } catch (e) { naver = -1; }
+    try { chain = await indexnowFetch(opt) || chain; } catch (e) {}
+    const good = (naver >= 200 && naver < 300) || (chain.status >= 200 && chain.status < 300);
+    if (!good) ok = false;
+    out.push({ n: batch.length, naver, chain: chain.status });
+    await logIndexnow(env, { source, start: i, count: batch.length, status: chain.status, ep: chain.url || '', note: 'naver=' + naver + ' ' + note });
+  }
+  return { ok, out };
+}
+async function indexnowDaily(env, source, dry){
+  build();
+  try { await loadPosts(env); } catch (e) {}
+  const fresh = postFreshUrls();
+  const fp = {};
+  for (const t in IN_TYPES) { try { fp[t] = inFingerprint(IN_TYPES[t].sample()); } catch (e) { fp[t] = 'err'; } }
+  let prev = null;                                   /* null = 저장된 지문 없음(첫 실행) */
+  try {
+    const r = env && env.DB ? await env.DB.prepare('SELECT value FROM site_state WHERE site=? AND key=?').bind('king-study', 'in_fp').first() : null;
+    if (r && r.value) prev = JSON.parse(r.value);
+    else if (!env || !env.DB) prev = undefined;
+  } catch (e) { prev = undefined; }                  /* undefined = 읽기 실패 → 새 글만 */
+  let changed = [];
+  if (prev !== undefined) for (const t in fp) if (fp[t] !== 'err' && (!prev || prev[t] !== fp[t])) changed.push(t);
+  const plan = { fresh: fresh.length, changed, counts: {} };
+  for (const t of changed) plan.counts[t] = IN_TYPES[t].urls().length;
+  if (dry) return plan;
+  const res = [];
+  if (fresh.length) res.push(await inSubmit(env, fresh, source, 'posts'));
+  const next = Object.assign({}, prev || {});
+  for (const t of changed) {
+    const r = await inSubmit(env, IN_TYPES[t].urls().map(u => CFG.origin + u), source, 'type=' + t);
+    res.push(r); if (r.ok) next[t] = fp[t];
+  }
+  if (!fresh.length && !changed.length) await logIndexnow(env, { source, start: 0, count: 0, status: 0, ep: '', note: 'no-change' });
+  if (changed.length && env && env.DB) {
+    try {
+      await env.DB.prepare('INSERT INTO site_state (site,key,value,ts) VALUES (?,?,?,?) ON CONFLICT(site,key) DO UPDATE SET value=excluded.value, ts=excluded.ts')
+        .bind('king-study', 'in_fp', JSON.stringify(next), new Date().toISOString()).run();
+    } catch (e) {}
+  }
+  return { plan, res };
 }
 
 /* ══════════════ RSS 2.0 (네이버 제출용) ══════════════ */
@@ -2068,7 +2122,7 @@ export default {
   /* Cloudflare Cron Trigger — 매시간 IndexNow 자동 제출 */
   async scheduled(event, env, ctx) {
     try { POSTS_CACHE.at = 0; await loadPosts(env); } catch (e) {}
-    ctx.waitUntil(indexnowPing());
+    ctx.waitUntil(indexnowDaily(env, 'cron', false));
   },
 
   async fetch(request, env, ctx) {
@@ -2132,7 +2186,11 @@ export default {
 
     if (p === '/' + INDEXNOW_KEY + '.txt')
       return new Response(INDEXNOW_KEY, {headers:{'content-type':'text/plain;charset=utf-8'}});
-    if (p === '/api/indexnow') return indexnowPing();
+    if (p === '/api/indexnow') {
+      if (url.searchParams.get('key') !== INDEXNOW_KEY) return new Response('forbidden', { status: 403 });
+      const r = await indexnowDaily(env, 'manual', url.searchParams.get('dry') === '1');
+      return new Response(JSON.stringify(r), { headers: { 'content-type': 'application/json' } });
+    }
     if (p === '/favicon.ico') return faviconIco();
     if (p === '/favicon-32.png') return favicon32();
     if (p === '/apple-touch-icon.png' || p === '/apple-touch-icon-precomposed.png') return appleIcon();
