@@ -806,7 +806,8 @@ function shell(o){
   const url = CFG.origin + o.canonical;
   const d = o.dates || dates(hash(o.canonical));
   const ogSeed = (o.dates ? hash(o.canonical) : hash(o.canonical));
-  const ogImg = CFG.img ? CFG.img + photo(ogSeed) : CFG.origin + '/og/' + String(o.file||'og-default.jpg').replace(/\.jpg$/,'') + '.png';
+  /* og:image — 같은 사진을 1200×630 으로 크롭한 JPG (image/og/, 파일명 동일). 카카오톡·네이버 미리보기 규격 */
+  const ogImg = CFG.img ? CFG.img + 'og/' + photo(ogSeed) : CFG.origin + '/og/' + String(o.file||'og-default.jpg').replace(/\.jpg$/,'') + '.png';
   const ld = [];
 
   ld.push({"@context":"https://schema.org","@type":"WebSite",name:CFG.brand,alternateName:CFG.brandEn,url:CFG.origin,inLanguage:"ko-KR",
