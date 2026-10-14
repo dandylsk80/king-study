@@ -754,6 +754,13 @@ body{font-size:15.5px}
 .faq p{padding-left:20px}
 }
 @media(max-width:380px){.wrap,.hd{padding:0 14px}.thumbw{padding:12px 14px 0}.ctaw{padding:22px 14px}.cta{padding:28px 18px}.thumb-ov{padding:16px 16px}.hero-b,.cta-b{flex-direction:column}.hero-b .btn,.cta-b .btn{width:100%}}
+/* PC(769px~)는 전화를 걸 수 없으니 tel: 버튼을 숨기고 번호를 일반 텍스트로 보인다. 모바일은 그대로 */
+.telt{display:none}
+@media(min-width:769px){a[href^="tel:"]{display:none!important}.telt{display:inline-flex;align-items:center}
+.mn .telt{display:block;padding:15px 32px;font-size:15px;font-weight:700;border-bottom:1px solid var(--line)}
+.fab{align-items:flex-end}.fab .fabt{background:#fff;border:1px solid var(--line2);color:var(--ink);font-weight:800;font-size:13px;padding:8px 14px;border-radius:999px;box-shadow:var(--sh);white-space:nowrap}
+.btn-telt{font-weight:800;font-size:14px;padding:14px 6px;color:#fff;white-space:nowrap}.modal-b .btn-telt{color:var(--ink);flex:1;justify-content:center;padding:13px 10px;font-size:13.5px}
+.teli{display:inline!important;color:var(--acc);font-weight:700}}
 `;
 
 /* ══════════════ 로고 SVG ══════════════ */
@@ -767,7 +774,7 @@ function header(){
   return `<header><div class="hd"><a href="/" class="lg" aria-label="${CFG.brand} 홈"><span class="lgm">${LOGO_SVG}</span><span class="lgt"><b>${CFG.brand}</b><span>${BRAND_EN}</span></span></a>`
   + `<nav class="nav" aria-label="주 메뉴">${NAV.slice(0,4).map(([h,t])=>`<a href="${h}">${t}</a>`).join('')}<a href="/contact" class="cta">상담 신청</a></nav>`
   + `<button class="mb" onclick="var m=document.getElementById('mn');m.classList.toggle('on');this.setAttribute('aria-expanded',m.classList.contains('on'))" aria-expanded="false" aria-controls="mn">MENU</button></div>`
-  + `<div class="mn" id="mn">${NAV.map(([h,t])=>`<a href="${h}">${t}</a>`).join('')}<a href="tel:${CFG.telRaw}">📞 ${CFG.tel}</a></div></header>`;
+  + `<div class="mn" id="mn">${NAV.map(([h,t])=>`<a href="${h}">${t}</a>`).join('')}<a href="tel:${CFG.telRaw}">📞 ${CFG.tel}</a><span class="telt">📞 ${CFG.tel}</span></div></header>`;
 }
 
 function footer(){
@@ -778,12 +785,12 @@ function footer(){
   + `<div class="fcols">`
   + `<div class="fcol"><h4>Subject</h4>${SUBJ_KEYS.map(k=>`<a href="/subject/${k}">${SUBJ[k].em} ${SUBJ[k].ko}과외</a>`).join('')}</div>`
   + `<div class="fcol"><h4>Region</h4>${SIDO_ORDER.slice(0,6).map(s=>`<a href="/hub/${s}">${SIDO[s]}</a>`).join('')}<a href="/hub">전체 지역</a></div>`
-  + `<div class="fcol"><h4>Info</h4><a href="/post">📰 학습 정보</a><a href="/all-schools" class="hi">🏫 전체 학교</a><a href="/list">📑 전체 목록</a><a href="/guide">학습 가이드</a><a href="/contact">상담 신청</a><a href="tel:${CFG.telRaw}">${CFG.tel}</a></div>`
+  + `<div class="fcol"><h4>Info</h4><a href="/post">📰 학습 정보</a><a href="/all-schools" class="hi">🏫 전체 학교</a><a href="/list">📑 전체 목록</a><a href="/guide">학습 가이드</a><a href="/contact">상담 신청</a><a href="tel:${CFG.telRaw}">${CFG.tel}</a><span class="telt">${CFG.tel}</span></div>`
   + `</div></div>`
   + `<div class="fall"><b>🏫 전체 학교 보기</b><span>전국 ${LIST.length.toLocaleString()}개 초·중·고를 가나다순으로 모두 확인할 수 있습니다.</span><a href="/all-schools">전체 학교 →</a></div>`
   + `<p class="fno">안내 · 본 사이트는 학습 정보 제공을 목적으로 하며, 게시된 학교 정보는 공개 자료를 기준으로 정리한 것입니다. 학습 성과를 보장하지 않습니다.</p>`
   + `<div class="fbot"><span>© ${new Date().getFullYear()} ${CFG.brand}. All rights reserved.</span><span>${CFG.brandEn}</span></div></div></footer>`
-  + `<div class="fab"><a href="tel:${CFG.telRaw}" class="p" aria-label="전화 상담"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5 19.79 19.79 0 01.22 2.84 2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.94 6.94l1.41-1.41a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></a>`
+  + `<div class="fab"><a href="tel:${CFG.telRaw}" class="p" aria-label="전화 상담"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5 19.79 19.79 0 01.22 2.84 2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.94 6.94l1.41-1.41a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></a><span class="telt fabt">${CFG.tel}</span>`
   + `<a href="sms:${CFG.telRaw}" aria-label="문자 상담"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></a>`
   + `<a href="/contact" aria-label="상담 신청"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></a></div>`;
 }
@@ -897,7 +904,7 @@ function ctaBlock(t, seed, label){
   return `<section class="ctaw"><div class="cta">`
   + (CFG.img ? `<img class="cta-bg" src="${CFG.img}111.jpg" alt="${ctaAlt}" loading="lazy" decoding="async" onerror="this.remove()">` : '')
   + `<div class="cta-in"><span class="k">💬 Consulting</span><h2>${h}</h2><p>${p}</p>`
-  + `<div class="cta-b"><a href="/contact" class="btn btn-f">상담 신청하기</a><a href="tel:${CFG.telRaw}" class="btn">📞 ${CFG.tel}</a></div></div></div></section>`;
+  + `<div class="cta-b"><a href="/contact" class="btn btn-f">상담 신청하기</a><a href="tel:${CFG.telRaw}" class="btn">📞 ${CFG.tel}</a><span class="telt btn-telt">전화 ${CFG.tel}</span></div></div></div></section>`;
 }
 function faqBlock(list){ return `<div class="faq">${list.map(f=>`<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div>`; }
 function bcNav(items){
@@ -1494,7 +1501,7 @@ function pageContact(){
   const bc=[{name:'홈',url:'/'},{name:'상담 신청',url:'/contact'}];
   const body = thumb({seed:hash('/contact'), file:'contact.jpg', kicker:'CONSULTING', title:'상담 신청', sub:`이름·주소·학년·희망 과목을 남겨 주세요 · ${CFG.tel}`})
   + `<section class="ph"><div class="wrap">${bcNav(bc)}<span class="k">💬 Consulting</span><h1>상담 신청</h1>
-  <p class="lead">학생 이름과 주소, 학년, 지금 고민되는 과목을 남겨 주시면 확인 후 연락드립니다. 통화가 빠른 경우 <a href="tel:${CFG.telRaw}" style="border-bottom:1px solid var(--acc);color:var(--acc)">${CFG.tel}</a>로 바로 연락 주셔도 됩니다.</p>${dateLine(d)}</div></section>
+  <p class="lead">학생 이름과 주소, 학년, 지금 고민되는 과목을 남겨 주시면 확인 후 연락드립니다. 통화가 빠른 경우 <a href="tel:${CFG.telRaw}" style="border-bottom:1px solid var(--acc);color:var(--acc)">${CFG.tel}</a><span class="telt teli">${CFG.tel}</span>로 바로 연락 주셔도 됩니다.</p>${dateLine(d)}</div></section>
   <section class="sec"><div class="wrap"><div class="form">
   <div class="fr"><label class="fl" for="f-name">학생 이름 <b>*</b></label><input class="fi" id="f-name" autocomplete="name" placeholder="학생 이름을 입력해 주세요"></div>
   <div class="fr"><label class="fl" for="f-phone">연락처 <b>*</b></label><input class="fi" id="f-phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="010-0000-0000"></div>
@@ -1513,7 +1520,7 @@ function pageContact(){
       <div class="modal-ic">✓</div>
       <div class="modal-t">상담 신청이 접수되었습니다</div>
       <p class="modal-p">확인 후 순차적으로 연락드리겠습니다.<br>급하신 경우 ${CFG.tel} 로 연락 주세요.</p>
-      <div class="modal-b"><button type="button" class="btn btn-f" onclick="closeModal()">확인</button><a href="tel:${CFG.telRaw}" class="btn btn-o">📞 전화 상담</a></div>
+      <div class="modal-b"><button type="button" class="btn btn-f" onclick="closeModal()">확인</button><a href="tel:${CFG.telRaw}" class="btn btn-o">📞 전화 상담</a><span class="telt btn-telt">전화 ${CFG.tel}</span></div>
     </div>
   </div>
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"><\/script>
