@@ -1,3 +1,17 @@
+/* /img/<파일> — 자기 저장소 image/ 사진 자체 서빙(2026-10-16): jsDelivr 간헐 503 대비. 허용 목록 → Cache API(IMG_VER) → GitHub raw → jsDelivr 폴백 → 1년 immutable */
+const IMG_ORIGIN="https://king-study.com";
+const IMG_VER="1";
+const IMG_OK=/^([A-Za-z0-9._-]+\/)?[A-Za-z0-9._-]+\.(jpe?g|png|webp|gif|svg)$/;
+async function imgProxy(request,ctx,p){
+  if(!IMG_OK.test(p)) return new Response("not found",{status:404});
+  let repo="king-study", rest=p;
+  const ext=p.split(".").pop().toLowerCase(); const ct=ext==="png"?"image/png":ext==="webp"?"image/webp":ext==="gif"?"image/gif":ext==="svg"?"image/svg+xml":"image/jpeg";
+  const key=new Request(IMG_ORIGIN+"/img/"+p+"?v="+IMG_VER,{method:"GET"}); const cache=(typeof caches!=="undefined"&&caches.default)?caches.default:null;
+  if(cache){ try{ const hit=await cache.match(key); if(hit) return hit; }catch(e){} }
+  const srcs=["https://raw.githubusercontent.com/dandylsk80/"+repo+"/main/image/"+rest,"https://cdn.jsdelivr.net/gh/dandylsk80/"+repo+"@main/image/"+rest];
+  for(let i=0;i<srcs.length;i++){ try{ const r=await fetch(srcs[i]); if(r.ok){ const body=await r.arrayBuffer(); const res=new Response(body,{headers:{"content-type":ct,"cache-control":"public, max-age=31536000, immutable","x-img-src":i?"jsd":"raw"}}); if(cache&&ctx&&ctx.waitUntil) ctx.waitUntil(cache.put(key,res.clone())); return res; } }catch(e){} }
+  return new Response("image unavailable",{status:502});
+}
 function reEsc(x){ return x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"); }
 /* 이름 뒤 조사를 받침에 맞게 고른다 (danmalgi 검증본을 13개 공통으로 사용) */
 function josaFor(word,j){
@@ -207,7 +221,7 @@ const CFG = {
   telRaw  : '01068348080',
   gas     : 'https://script.google.com/macros/s/AKfycbySwAKy0-0iN006m0wVhcovXn-kdk3HVl5vCVzXo5mocwWzDMecG04iqRi8Tf18yBvN/exec',
   // ★ 깃허브에 이미지 올린 뒤 아래 주소만 바꾸면 썸네일이 전부 연결됩니다
-  img     : 'https://cdn.jsdelivr.net/gh/dandylsk80/king-study@main/image/',   // jsDelivr CDN (raw.githubusercontent.com은 429 차단됨)
+  img     : 'https://king-study.com/img/',   // jsDelivr CDN (raw.githubusercontent.com은 429 차단됨)
   slogan  : '학교별 국·영·수·사·과 과외 정보'
 };
 
@@ -2232,6 +2246,7 @@ export default {
     if (ogm) { const r = ogPng(ogm[1]); return r || notFound(); }
     /* 사이트맵·RSS 생성 함수는 동기라 POSTS_CACHE 를 먼저 채워 준다 */
     if (p.startsWith('/sitemap') || p === '/rss.xml' || p === '/rss' || p === '/atom.xml' || p === '/atom') await loadPosts(env);
+    if (p.indexOf('/img/') === 0) return imgProxy(request, ctx, p.slice(5));
     if (p === '/og.jpg') return ogHomeJpg(request, ctx);
     if (p === '/robots.txt') return robots();
     if (p === '/llms.txt' || p === '/ai.txt') return llmsTxt();
