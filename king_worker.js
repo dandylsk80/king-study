@@ -808,13 +808,36 @@ function thumb(o){
   + (o.sub?`<p class="thumb-s">${esc(o.sub)}</p>`:'') + `</div></div></div></div>`;
 }
 
+/* 홈 og:image — jsDelivr 가 간헐적으로 503/접속 불가(2026-10-15 확인)라 워커가 /og.jpg 로 직접 서빙한다. GitHub raw → jsDelivr 순으로 받아 엣지 캐시. 파일은 shell() 의 홈 선택과 같은 photo(hash('/')) */
+function ogHomeJpg(request, ctx){
+  const file = 'og/' + photo(hash('/'));
+  const srcs = ['https://raw.githubusercontent.com/dandylsk80/king-study/main/image/' + file, CFG.img + file];
+  const key = new Request(CFG.origin + '/og.jpg?v=1', { method: 'GET' });
+  const cache = (typeof caches !== 'undefined' && caches.default) ? caches.default : null;
+  return (async () => {
+    if (cache) { try { const hit = await cache.match(key); if (hit) return hit; } catch (e) {} }
+    for (const src of srcs) {
+      try {
+        const r = await fetch(src);
+        if (r.ok) {
+          const body = await r.arrayBuffer();
+          const res = new Response(body, { headers: { 'content-type': 'image/jpeg', 'cache-control': 'public, max-age=31536000, immutable' } });
+          if (cache && ctx && ctx.waitUntil) ctx.waitUntil(cache.put(key, res.clone()));
+          return res;
+        }
+      } catch (e) {}
+    }
+    return new Response('og image unavailable', { status: 502 });
+  })();
+}
+
 /* ══════════════ HTML 셸 (SEO / AEO / GEO) ══════════════ */
 function shell(o){
   const url = CFG.origin + o.canonical;
   const d = o.dates || dates(hash(o.canonical));
   const ogSeed = (o.dates ? hash(o.canonical) : hash(o.canonical));
   /* og:image — 같은 사진을 1200×630 으로 크롭한 JPG (image/og/, 파일명 동일). 카카오톡·네이버 미리보기 규격 */
-  const ogImg = CFG.img ? CFG.img + 'og/' + photo(ogSeed) : CFG.origin + '/og/' + String(o.file||'og-default.jpg').replace(/\.jpg$/,'') + '.png';
+  const ogImg = o.canonical === '/' ? CFG.origin + '/og.jpg' : (CFG.img ? CFG.img + 'og/' + photo(ogSeed) : CFG.origin + '/og/' + String(o.file||'og-default.jpg').replace(/\.jpg$/,'') + '.png');   /* 홈은 /og.jpg 자체 서빙(아래 ogHomeJpg) */
   const ld = [];
 
   ld.push({"@context":"https://schema.org","@type":"WebSite",name:CFG.brand,alternateName:CFG.brandEn,url:CFG.origin,inLanguage:"ko-KR",
@@ -2209,6 +2232,7 @@ export default {
     if (ogm) { const r = ogPng(ogm[1]); return r || notFound(); }
     /* 사이트맵·RSS 생성 함수는 동기라 POSTS_CACHE 를 먼저 채워 준다 */
     if (p.startsWith('/sitemap') || p === '/rss.xml' || p === '/rss' || p === '/atom.xml' || p === '/atom') await loadPosts(env);
+    if (p === '/og.jpg') return ogHomeJpg(request, ctx);
     if (p === '/robots.txt') return robots();
     if (p === '/llms.txt' || p === '/ai.txt') return llmsTxt();
     if(p==="/atom.xml"||p==="/atom") return new Response(atomFromRss(await (rssFeed()).text(), CFG.origin+"/atom.xml"),{headers:{"content-type":"application/atom+xml; charset=UTF-8","cache-control":"public, max-age=3600"}});
