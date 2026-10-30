@@ -1823,7 +1823,7 @@ async function inSubmit(env, urls, source, note){
     const opt = { method: 'POST', headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify({ host: CFG.origin.replace(/^https?:\/\//, ''), key: INDEXNOW_KEY, keyLocation: CFG.origin + '/' + INDEXNOW_KEY + '.txt', urlList: batch }) };
     let naver = 0, chain = { status: 0, url: '' };
-    try { naver = (await fetch('https://searchadvisor.naver.com/indexnow', opt)).status; } catch (e) { naver = -1; }
+    try { naver = "off" /* 2026-10-30 네이버 IndexNow 중단 — 새 글만 allcarestudy 크론이 보낸다 */; } catch (e) { naver = -1; }
     try { chain = await indexnowFetch(opt) || chain; } catch (e) {}
     const good = (naver >= 200 && naver < 300) || (chain.status >= 200 && chain.status < 300);
     if (!good) ok = false;
